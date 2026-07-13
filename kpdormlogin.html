@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KP Dormitory — ที่พักสะดวกสบาย</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root {
+  --o500:#F97316; --o600:#EA580C; --o700:#C2410C;
+  --o100:#FFF7ED; --o200:#FFEDD5; --o300:#FED7AA;
+  --n900:#111827; --n700:#374151; --n500:#6B7280;
+  --n300:#D1D5DB; --n200:#E5E7EB; --n100:#F9FAFB;
+  --white:#FFFFFF;
+  --radius:14px; --radius-sm:10px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(249,115,22,.08);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.14);
+  --transition:.18s cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sarabun',sans-serif;background:var(--white);color:var(--n900);overflow-x:hidden;}
+
+/* ─── NAVBAR ─────────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:64px;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--n200);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--o500),var(--o700));
+  display:flex;align-items:center;justify-content:center;}
+.nav-logo-icon svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.nav-logo-text{font-family:'Prompt',sans-serif;font-size:16px;font-weight:600;color:var(--n900);}
+.nav-logo-text span{color:var(--o500);}
+.nav-links{display:flex;align-items:center;gap:8px;}
+.nav-link{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--n700);text-decoration:none;transition:color var(--transition),background var(--transition);}
+.nav-link:hover{background:var(--o100);color:var(--o600);}
+.btn-nav-login{padding:8px 20px;background:var(--o500);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;transition:background var(--transition),transform .1s;}
+.btn-nav-login:hover{background:var(--o600);}
+.btn-nav-login:active{transform:scale(.97);}
+
+/* ─── HERO ───────────────────────────────────────────── */
+.hero{min-height:100vh;display:flex;align-items:center;
+  background:linear-gradient(160deg,var(--white) 0%,var(--o100) 55%,var(--o200) 100%);
+  padding:80px 5% 60px;position:relative;overflow:hidden;}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+.hero-blob-1{width:500px;height:500px;background:rgba(249,115,22,.12);top:-100px;right:-80px;}
+.hero-blob-2{width:320px;height:320px;background:rgba(249,115,22,.08);bottom:-80px;left:10%;}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;position:relative;z-index:1;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--o100);border:1px solid var(--o300);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--o700);letter-spacing:.06em;margin-bottom:20px;}
+.hero-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--o500);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+.hero-title{font-family:'Prompt',sans-serif;font-size:clamp(32px,4.5vw,54px);font-weight:700;line-height:1.15;color:var(--n900);margin-bottom:16px;}
+.hero-title em{font-style:normal;color:var(--o500);}
+.hero-subtitle{font-size:16px;color:var(--n500);line-height:1.7;margin-bottom:32px;max-width:440px;}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{height:50px;padding:0 28px;background:linear-gradient(135deg,var(--o500),var(--o700));color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(249,115,22,.35);transition:all var(--transition);display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(249,115,22,.45);transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0);}
+.btn-secondary{height:50px;padding:0 28px;background:var(--white);color:var(--n700);border:1.5px solid var(--n200);border-radius:var(--radius-sm);font-size:15px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;transition:all var(--transition);display:inline-flex;align-items:center;gap:8px;}
+.btn-secondary:hover{border-color:var(--o300);color:var(--o600);background:var(--o100);}
+.btn-secondary svg,.btn-primary svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* hero stats */
+.hero-stats{display:flex;gap:28px;margin-top:36px;}
+.hero-stat-val{font-family:'Prompt',sans-serif;font-size:26px;font-weight:700;color:var(--o500);line-height:1;}
+.hero-stat-label{font-size:12px;color:var(--n500);margin-top:3px;}
+
+/* hero visual */
+.hero-visual{display:flex;flex-direction:column;gap:14px;}
+.info-card{background:var(--white);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-card);border:1px solid var(--n200);}
+.info-card-title{font-size:11px;font-weight:600;color:var(--n500);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.info-card-badge{background:var(--o100);color:var(--o700);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+
+/* room grid in card */
+.room-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.room-chip{border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all var(--transition);}
+.room-chip.vacant{background:var(--o100);border:1.5px solid var(--o300);}
+.room-chip.vacant:hover{background:var(--o200);border-color:var(--o500);transform:scale(1.05);}
+.room-chip.occupied{background:var(--n100);border:1.5px solid var(--n200);cursor:default;}
+.room-chip.maintenance{background:#FEF9C3;border:1.5px solid #FDE047;cursor:default;}
+.room-chip-no{font-size:11px;font-weight:700;line-height:1;}
+.room-chip.vacant .room-chip-no{color:var(--o700);}
+.room-chip.occupied .room-chip-no{color:var(--n500);}
+.room-chip.maintenance .room-chip-no{color:#854D0E;}
+.room-chip-status{font-size:9px;margin-top:3px;}
+.room-chip.vacant .room-chip-status{color:var(--o500);}
+.room-chip.occupied .room-chip-status{color:var(--n400,#9CA3AF);}
+.room-chip.maintenance .room-chip-status{color:#A16207;}
+
+/* legend */
+.room-legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--n500);}
+.legend-dot{width:8px;height:8px;border-radius:50%;}
+
+/* pricing card */
+.price-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--n100);}
+.price-row:last-child{border-bottom:none;}
+.price-label{font-size:13px;color:var(--n500);display:flex;align-items:center;gap:7px;}
+.price-label svg{width:15px;height:15px;stroke:var(--o500);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.price-val{font-size:14px;font-weight:700;color:var(--n900);font-family:'Prompt',sans-serif;}
+.price-unit{font-size:11px;font-weight:400;color:var(--n500);}
+
+/* ─── FEATURES ───────────────────────────────────────── */
+.section{max-width:1100px;margin:0 auto;padding:80px 5%;}
+.section-eyebrow{font-size:12px;font-weight:600;color:var(--o500);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.section-title{font-family:'Prompt',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:700;color:var(--n900);margin-bottom:14px;}
+.section-sub{font-size:15px;color:var(--n500);line-height:1.7;max-width:520px;margin-bottom:48px;}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.feature-card{background:var(--white);border:1px solid var(--n200);border-radius:var(--radius);padding:24px;transition:box-shadow var(--transition),border-color var(--transition);}
+.feature-card:hover{box-shadow:var(--shadow-card);border-color:var(--o300);}
+.feature-icon{width:46px;height:46px;border-radius:12px;background:var(--o100);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.feature-icon svg{width:22px;height:22px;stroke:var(--o500);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.feature-title{font-family:'Prompt',sans-serif;font-size:15px;font-weight:600;color:var(--n900);margin-bottom:7px;}
+.feature-text{font-size:13px;color:var(--n500);line-height:1.65;}
+
+/* ─── CTA BANNER ─────────────────────────────────────── */
+.cta-banner{background:linear-gradient(135deg,var(--o500) 0%,var(--o700) 100%);margin:0 5% 80px;border-radius:20px;padding:48px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.cta-banner-text{color:#fff;}
+.cta-banner-title{font-family:'Prompt',sans-serif;font-size:clamp(20px,2.5vw,28px);font-weight:700;margin-bottom:8px;}
+.cta-banner-sub{font-size:14px;color:rgba(255,255,255,.75);}
+.btn-cta-white{height:48px;padding:0 28px;background:#fff;color:var(--o700);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:'Prompt',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all var(--transition);flex-shrink:0;}
+.btn-cta-white:hover{background:var(--o100);}
+.btn-cta-white svg{width:16px;height:16px;stroke:var(--o700);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ─── FOOTER ─────────────────────────────────────────── */
+.footer{background:var(--n900);padding:32px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-logo{font-family:'Prompt',sans-serif;font-size:14px;font-weight:600;color:#fff;}
+.footer-logo span{color:var(--o300);}
+.footer-copy{font-size:12px;color:#6B7280;}
+
+/* ─── LOGIN MODAL ─────────────────────────────────────── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:20px;width:100%;max-width:400px;
+  box-shadow:var(--shadow-lg);animation:slideUp .22s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-top{padding:28px 28px 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Prompt',sans-serif;font-size:18px;font-weight:700;color:var(--n900);}
+.modal-close{width:32px;height:32px;border:none;background:var(--n100);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--transition);}
+.modal-close:hover{background:var(--n200);}
+.modal-close svg{width:15px;height:15px;stroke:var(--n500);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.modal-body{padding:24px 28px 28px;}
+.modal-sub{font-size:13px;color:var(--n500);margin-bottom:22px;}
+
+/* form fields */
+.mfield{margin-bottom:16px;}
+.mfield label{display:block;font-size:12px;font-weight:600;color:var(--n700);margin-bottom:6px;letter-spacing:.02em;}
+.mfield-wrap{position:relative;}
+.mfield-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center;}
+.mfield-icon svg{width:15px;height:15px;stroke:var(--n300);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.mfield input{width:100%;height:46px;padding:0 40px;border:1.5px solid var(--n200);border-radius:var(--radius-sm);font-size:14px;font-family:'Sarabun',sans-serif;color:var(--n900);background:var(--n100);outline:none;transition:border-color var(--transition),box-shadow var(--transition);}
+.mfield input::placeholder{color:var(--n300);}
+.mfield input:focus{border-color:var(--o500);background:#fff;box-shadow:0 0 0 3px rgba(249,115,22,.12);}
+.mfield input.error{border-color:#EF4444;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:3px;color:var(--n300);display:flex;transition:color var(--transition);}
+.pw-eye:hover{color:var(--o500);}
+.pw-eye svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.err-hint{font-size:11px;color:#EF4444;margin-top:4px;display:none;}
+.modal-opts{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.modal-remember{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--n500);cursor:pointer;}
+.modal-remember input{accent-color:var(--o500);}
+.modal-forgot{font-size:12px;color:var(--o500);font-weight:500;text-decoration:none;}
+.modal-alert{border-radius:8px;padding:10px 13px;font-size:12px;margin-bottom:14px;display:none;align-items:center;gap:8px;line-height:1.5;}
+.modal-alert.show{display:flex;}
+.modal-alert-err{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;}
+.modal-alert-ok{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
+.modal-alert svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.btn-modal-submit{width:100%;height:48px;background:linear-gradient(135deg,var(--o500),var(--o700));color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(249,115,22,.3);transition:opacity var(--transition);}
+.btn-modal-submit:hover{opacity:.92;}
+.btn-modal-submit:disabled{opacity:.6;cursor:not-allowed;}
+.modal-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.modal-divider{display:flex;align-items:center;gap:10px;margin:18px 0;}
+.modal-divider-line{flex:1;height:1px;background:var(--n200);}
+.modal-divider-text{font-size:11px;color:var(--n300);}
+.btn-modal-register{width:100%;height:44px;background:#fff;border:1.5px solid var(--n200);border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:'Prompt',sans-serif;color:var(--n700);cursor:pointer;transition:all var(--transition);}
+.btn-modal-register:hover{border-color:var(--o300);color:var(--o600);background:var(--o100);}
+
+/* ─── BOOKING MODAL ──────────────────────────────────── */
+.book-modal-box{background:#fff;border-radius:20px;width:100%;max-width:460px;box-shadow:var(--shadow-lg);animation:slideUp .22s ease;}
+.book-room-header{background:linear-gradient(135deg,var(--o500),var(--o700));border-radius:14px;padding:20px;margin-bottom:18px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.book-room-no{font-family:'Prompt',sans-serif;font-size:28px;font-weight:700;}
+.book-room-floor{font-size:12px;color:rgba(255,255,255,.75);margin-top:2px;}
+.book-badge-free{background:rgba(255,255,255,.25);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;}
+.book-price-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.book-price-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--n100);border-radius:8px;}
+.book-price-label{font-size:13px;color:var(--n500);}
+.book-price-val{font-size:14px;font-weight:700;color:var(--n900);font-family:'Prompt',sans-serif;}
+.book-total{background:var(--o100);border:1.5px solid var(--o300);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.book-total-label{font-size:13px;color:var(--o700);font-weight:500;}
+.book-total-val{font-family:'Prompt',sans-serif;font-size:20px;font-weight:700;color:var(--o600);}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:48px;}
+  .hero-visual{order:-1;}
+  .hero{min-height:auto;padding-top:100px;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:640px){
+  .features-grid{grid-template-columns:1fr;}
+  .room-grid{grid-template-columns:repeat(4,1fr);}
+  .nav-links{display:none;}
+  .hero-stats{gap:18px;}
+  .cta-banner{padding:32px 24px;}
+}
+
+/* ── RESPONSIVE FIXES ─────────────────────────────── */
+/* Mobile: stack hero */
+@media(max-width:768px){
+  .nav{padding:0 4%;}
+  .nav-links{display:none;}
+  .hero{padding:80px 4% 48px;}
+  .hero-inner{grid-template-columns:1fr;gap:32px;}
+  .hero-visual{order:-1;}
+  .hero-title{font-size:clamp(26px,7vw,40px);}
+  .hero-subtitle{font-size:14px;}
+  .hero-cta{flex-direction:column;}
+  .btn-primary,.btn-secondary{width:100%;justify-content:center;}
+  .hero-stats{gap:16px;}
+  .hero-stat-val{font-size:22px;}
+  .room-grid{grid-template-columns:repeat(4,1fr);}
+  .features-grid{grid-template-columns:1fr;}
+  .cta-banner{margin:0 4% 60px;padding:28px 20px;flex-direction:column;gap:18px;}
+  .btn-cta-white{width:100%;justify-content:center;}
+  .footer{flex-direction:column;align-items:flex-start;gap:8px;padding:24px 4%;}
+  /* modal */
+  .modal-box,.book-modal-box{border-radius:16px 16px 0 0;position:fixed;bottom:0;left:0;right:0;max-width:100%;animation:slideUpMobile .22s ease;}
+  @keyframes slideUpMobile{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-overlay{align-items:flex-end;padding:0;}
+}
+@media(max-width:480px){
+  .hero-stats{flex-wrap:wrap;gap:12px;}
+  .room-grid{grid-template-columns:repeat(3,1fr);gap:6px;}
+  .room-chip{padding:8px 4px;}
+  .room-chip-no{font-size:9px;}
+  .hero-cta .btn-primary,.hero-cta .btn-secondary{height:46px;font-size:14px;}
+}
+@media(min-width:769px) and (max-width:1024px){
+  .hero-inner{gap:36px;}
+  .hero-title{font-size:clamp(28px,4vw,44px);}
+  .features-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ──────────────────────────────────── -->
+<nav class="nav">
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div class="nav-logo-text">KP <span>Dorm</span>itory</div>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="#rooms">ห้องพัก</a>
+    <a class="nav-link" href="#amenities">สิ่งอำนวยความสะดวก</a>
+    <a class="nav-link" href="#contact">ติดต่อเรา</a>
+  </div>
+  <button class="btn-nav-login" onclick="openLoginModal()">เข้าสู่ระบบ</button>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+
+    <!-- LEFT -->
+    <div>
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        กำลังเปิดรับผู้เช่า
+      </div>
+      <h1 class="hero-title">ที่พักสะดวกสบาย<br>ราคา<em>เข้าถึงได้</em><br>ใกล้ทุกสิ่ง</h1>
+      <p class="hero-subtitle">หอพัก KP ตอบโจทย์ทุกไลฟ์สไตล์ ห้องสะอาด ปลอดภัย พร้อมสิ่งอำนวยความสะดวกครบครัน</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="openBookModal(null)">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          จองห้องพัก
+        </button>
+        <button class="btn-secondary" onclick="document.getElementById('rooms').scrollIntoView({behavior:'smooth'})">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          ดูห้องว่าง
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-val" id="statVacantHero">—</div>
+          <div class="hero-stat-label">ห้องว่างตอนนี้</div>
+        </div>
+        <div style="width:1px;background:var(--n200)"></div>
+        <div>
+          <div class="hero-stat-val">1,500</div>
+          <div class="hero-stat-label">บาท/เดือน</div>
+        </div>
+        <div style="width:1px;background:var(--n200)"></div>
+        <div>
+          <div class="hero-stat-val">24/7</div>
+          <div class="hero-stat-label">รปภ. ดูแล</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: info cards -->
+    <div class="hero-visual" id="rooms">
+
+      <!-- Room availability card -->
+      <div class="info-card">
+        <div class="info-card-title">
+          ห้องพักทั้งหมด
+          <span class="info-card-badge" id="vacantBadge">กำลังโหลด...</span>
+        </div>
+        <div class="room-grid" id="roomGrid">
+          <!-- filled by JS -->
+          <div style="grid-column:span 5;text-align:center;padding:16px;color:var(--n300);font-size:13px;">กำลังโหลดข้อมูลห้อง...</div>
+        </div>
+        <div class="room-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--o300)"></div>ว่าง</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--n200)"></div>มีผู้เช่า</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#FDE047"></div>ซ่อมบำรุง</div>
+        </div>
+      </div>
+
+      <!-- Pricing card -->
+      <div class="info-card">
+        <div class="info-card-title">อัตราค่าใช้จ่าย</div>
+        <div class="price-row">
+          <span class="price-label"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>ค่าเช่า/เดือน</span>
+          <span class="price-val">1,500 <span class="price-unit">บาท</span></span>
+        </div>
+        <div class="price-row">
+          <span class="price-label"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>ค่าไฟ</span>
+          <span class="price-val">5 <span class="price-unit">บาท/หน่วย</span></span>
+        </div>
+        <div class="price-row">
+          <span class="price-label"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>ค่าน้ำ</span>
+          <span class="price-val">18 <span class="price-unit">บาท/หน่วย</span></span>
+        </div>
+        <div class="price-row">
+          <span class="price-label"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>เงินประกัน</span>
+          <span class="price-val">3,000 <span class="price-unit">บาท</span></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ──────────────────────────────────── -->
+<section id="amenities">
+  <div class="section" style="padding-top:60px">
+    <div class="section-eyebrow">สิ่งอำนวยความสะดวก</div>
+    <h2 class="section-title">ครบครัน ตอบโจทย์ชีวิตประจำวัน</h2>
+    <p class="section-sub">ทุกห้องออกแบบมาเพื่อความสะดวกสบายสูงสุด</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="feature-title">WiFi ความเร็วสูง</div>
+        <div class="feature-text">อินเทอร์เน็ตไฟเบอร์ ใช้งานได้ 24 ชั่วโมง ไม่จำกัดความเร็ว</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.7A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div class="feature-title">รักษาความปลอดภัย 24 ชม.</div>
+        <div class="feature-text">กล้อง CCTV ทั่วบริเวณ รปภ.ดูแลตลอดเวลา ระบบบัตรเข้าออก</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <div class="feature-title">บรรยากาศดี สะอาด</div>
+        <div class="feature-text">ทีมแม่บ้านดูแลพื้นที่ส่วนกลางทุกวัน บรรยากาศน่าอยู่</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="feature-title">ลงทะเบียนออนไลน์</div>
+        <div class="feature-text">สมัคร จอง และจ่ายค่าเช่าผ่านระบบออนไลน์ ไม่ต้องเดินทาง</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+        <div class="feature-title">แจ้งซ่อมออนไลน์</div>
+        <div class="feature-text">แจ้งปัญหาผ่านแอป ทีมช่างดูแลภายใน 24 ชั่วโมง</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <div class="feature-title">ที่จอดรถ</div>
+        <div class="feature-text">ที่จอดรถและมอเตอร์ไซค์ มีหลังคากันฝน ปลอดภัย</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA BANNER ────────────────────────────────── -->
+<div style="padding:0 5% 0" id="contact">
+  <div class="cta-banner">
+    <div class="cta-banner-text">
+      <div class="cta-banner-title">พร้อมย้ายเข้าได้เลย — ห้องว่างมีจำนวนจำกัด</div>
+      <div class="cta-banner-sub">จองออนไลน์ ไม่มีค่าธรรมเนียมการจอง · ยืนยันทันที</div>
+    </div>
+    <button class="btn-cta-white" onclick="openBookModal(null)">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      จองห้องพักเลย
+    </button>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-logo">KP <span>Dorm</span>itory</div>
+  <div class="footer-copy">© 2025 Tanakrit Phetdum · สอบถาม IT Support Contect ธนกฤษฎ์ เพชรดำ</div>
+</footer>
+
+<!-- ─── LOGIN MODAL ──────────────────────────────── -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div class="modal-title">เข้าสู่ระบบ</div>
+      <button class="modal-close" onclick="closeLoginModal()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-sub">เข้าสู่ระบบจัดการหอพัก KP Dormitory</p>
+
+      <div class="modal-alert modal-alert-err" id="loginAlertErr" role="alert">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="loginErrMsg">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</span>
+      </div>
+      <div class="modal-alert modal-alert-ok" id="loginAlertOk" role="alert">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>เข้าสู่ระบบสำเร็จ กำลังพาคุณไปแดชบอร์ด...</span>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="mfield">
+          <label>ชื่อผู้ใช้</label>
+          <div class="mfield-wrap">
+            <span class="mfield-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            <input type="text" id="loginUser" placeholder="กรอกชื่อผู้ใช้" autocapitalize="off">
+          </div>
+          <div class="err-hint" id="errUser">กรุณากรอกชื่อผู้ใช้</div>
+        </div>
+        <div class="mfield">
+          <label>รหัสผ่าน</label>
+          <div class="mfield-wrap">
+            <span class="mfield-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+            <input type="password" id="loginPass" placeholder="กรอกรหัสผ่าน">
+            <button type="button" class="pw-eye" id="pwEye" onclick="togglePw()">
+              <svg id="eyeIco" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="err-hint" id="errPass">กรุณากรอกรหัสผ่าน</div>
+        </div>
+        <div class="modal-opts">
+          <label class="modal-remember"><input type="checkbox" id="remMe"> จดจำฉัน</label>
+          <a class="modal-forgot" href="#">ลืมรหัสผ่าน?</a>
+        </div>
+        <button type="submit" class="btn-modal-submit" id="loginBtn">
+          <span class="modal-spin" id="loginSpin"></span>
+          <span id="loginBtnText">เข้าสู่ระบบ</span>
+        </button>
+      </form>
+
+      <div class="modal-divider">
+        <div class="modal-divider-line"></div>
+        <span class="modal-divider-text">หรือ</span>
+        <div class="modal-divider-line"></div>
+      </div>
+      <button class="btn-modal-register" onclick="window.location.href='registorKPdomitory.html'">ลงทะเบียนผู้เช่าใหม่</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BOOKING MODAL ─────────────────────────────── -->
+<div class="modal-overlay" id="bookModal">
+  <div class="book-modal-box">
+    <div class="modal-top">
+      <div class="modal-title">จองห้องพัก</div>
+      <button class="modal-close" onclick="closeModal('bookModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="bookBody">
+      <div style="text-align:center;padding:20px;color:var(--n300);font-size:13px">กรุณาเลือกห้องจากแผนผัง</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WEBHOOK_LOGIN = 'https://tanakritphetdum.app.n8n.cloud/webhook/login-kpdomitory';
+const WEBHOOK_ROOMS = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-get';
+
+// ═══ ROOMS DATA ═══════════════════════════════
+let allRooms = [];
+
+async function loadRooms() {
+  try {
+    const res = await fetch(WEBHOOK_ROOMS, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'get_all'})
+    });
+    const raw = await res.json();
+    const arr = Array.isArray(raw) ? raw : (raw.data || []);
+    allRooms = arr.map(r => ({
+      id:      r.id || String(r.row_number),
+      room_no: String(r.room_no||'').trim(),
+      floor:   String(r.floor||'').replace('ชั้น ','').replace('ชั้น','').trim(),
+      status:  (r.status && r.status!=='empty') ? r.status : 'vacant',
+      rent:    Number(r.rent)||1500,
+      electric_rate: Number(r.electric_rate)||5,
+      water_rate:    Number(r.water_rate)||18,
+    })).filter(r=>r.room_no);
+  } catch(e) {
+    // demo data
+    allRooms = [
+      {id:'1',room_no:'A1101',floor:'1',status:'occupied',rent:1500,electric_rate:5,water_rate:18},
+      {id:'2',room_no:'A1102',floor:'1',status:'vacant',rent:1500,electric_rate:5,water_rate:18},
+      {id:'3',room_no:'A1103',floor:'1',status:'vacant',rent:1500,electric_rate:5,water_rate:18},
+      {id:'4',room_no:'A1104',floor:'1',status:'maintenance',rent:1500,electric_rate:5,water_rate:18},
+      {id:'5',room_no:'A1105',floor:'1',status:'vacant',rent:1500,electric_rate:5,water_rate:18},
+      {id:'6',room_no:'B1101',floor:'1',status:'occupied',rent:1500,electric_rate:5,water_rate:18},
+      {id:'7',room_no:'B1102',floor:'1',status:'vacant',rent:1500,electric_rate:5,water_rate:18},
+      {id:'8',room_no:'B1103',floor:'1',status:'occupied',rent:1500,electric_rate:5,water_rate:18},
+      {id:'9',room_no:'B1201',floor:'2',status:'vacant',rent:1500,electric_rate:5,water_rate:18},
+      {id:'10',room_no:'B1202',floor:'2',status:'occupied',rent:1500,electric_rate:5,water_rate:18},
+    ];
+  }
+  renderRoomGrid();
+  updateHeroStat();
+}
+
+function renderRoomGrid() {
+  const grid = document.getElementById('roomGrid');
+  if(!allRooms.length){ grid.innerHTML='<div style="grid-column:span 5;text-align:center;padding:16px;color:var(--n300);font-size:13px">ไม่พบข้อมูลห้อง</div>'; return; }
+  grid.innerHTML = allRooms.map(r => {
+    const cls = r.status==='occupied'?'occupied':r.status==='maintenance'?'maintenance':'vacant';
+    const label = r.status==='occupied'?'มีผู้เช่า':r.status==='maintenance'?'ซ่อม':'ว่าง';
+    const clickable = r.status==='vacant' ? `onclick="openBookModal('${r.id}')" title="คลิกเพื่อจองห้อง ${r.room_no}"` : '';
+    return `<div class="room-chip ${cls}" ${clickable}>
+      <div class="room-chip-no">${r.room_no}</div>
+      <div class="room-chip-status">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function updateHeroStat() {
+  const v = allRooms.filter(r=>r.status==='vacant').length;
+  document.getElementById('statVacantHero').textContent = v;
+  document.getElementById('vacantBadge').textContent = v + ' ห้องว่าง';
+}
+
+// ═══ LOGIN MODAL ═══════════════════════════════
+function openLoginModal() {
+  document.getElementById('loginModal').classList.add('show');
+  setTimeout(()=>document.getElementById('loginUser').focus(),100);
+}
+function closeLoginModal() { document.getElementById('loginModal').classList.remove('show'); }
+
+const eyeOpen  = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+const eyeClose = `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+let pwVisible = false;
+function togglePw() {
+  pwVisible=!pwVisible;
+  document.getElementById('loginPass').type = pwVisible?'text':'password';
+  document.getElementById('eyeIco').innerHTML = pwVisible?eyeClose:eyeOpen;
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  let ok = true;
+  ['loginUser','loginPass'].forEach(id=>document.getElementById(id).classList.remove('error'));
+  ['errUser','errPass'].forEach(id=>{document.getElementById(id).style.display='none';});
+  document.getElementById('loginAlertErr').classList.remove('show');
+  document.getElementById('loginAlertOk').classList.remove('show');
+  if(!username){document.getElementById('loginUser').classList.add('error');document.getElementById('errUser').style.display='block';ok=false;}
+  if(!password){document.getElementById('loginPass').classList.add('error');document.getElementById('errPass').style.display='block';ok=false;}
+  if(!ok) return;
+  if(document.getElementById('remMe').checked){localStorage.setItem('kp_username',username);}else{localStorage.removeItem('kp_username');}
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;
+  document.getElementById('loginSpin').style.display='block';
+  document.getElementById('loginBtnText').textContent='กำลังเข้าสู่ระบบ...';
+  try {
+    const res = await fetch(WEBHOOK_LOGIN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password,timestamp:new Date().toISOString()})});
+    let raw=null; try{raw=await res.json();}catch{}
+    const data=Array.isArray(raw)?raw[0]:raw;
+    const hasData=data&&(data.res_roomid||data.res_users||data.res_name||data.res_email);
+    if(hasData){
+      const ud=JSON.stringify({res_roomid:String(data.res_roomid||''),res_users:String(data.res_users||username),res_name:String(data.res_name||''),res_email:String(data.res_email||''),res_password:String(data.res_password||''),res_type:String(data.res_type||'')});
+      localStorage.setItem('kp_user',ud); sessionStorage.setItem('kp_user',ud);
+      document.getElementById('loginAlertOk').classList.add('show');
+      document.getElementById('loginBtnText').textContent='เข้าสู่ระบบสำเร็จ';
+      setTimeout(()=>{window.location.href='main.html';},800);
+    } else {
+      const msg=(data&&data.message)||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+      document.getElementById('loginErrMsg').textContent=msg;
+      document.getElementById('loginAlertErr').classList.add('show');
+      document.getElementById('loginUser').classList.add('error');
+      document.getElementById('loginPass').classList.add('error');
+      btn.disabled=false;
+      document.getElementById('loginSpin').style.display='none';
+      document.getElementById('loginBtnText').textContent='เข้าสู่ระบบ';
+    }
+  } catch {
+    document.getElementById('loginErrMsg').textContent='ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่';
+    document.getElementById('loginAlertErr').classList.add('show');
+    btn.disabled=false;
+    document.getElementById('loginSpin').style.display='none';
+    document.getElementById('loginBtnText').textContent='เข้าสู่ระบบ';
+  }
+});
+
+// ═══ BOOK MODAL ════════════════════════════════
+function openBookModal(roomId) {
+  const room = roomId ? allRooms.find(r=>r.id===roomId) : null;
+  const body = document.getElementById('bookBody');
+  if(room) {
+    body.innerHTML = `
+      <div class="book-room-header">
+        <div>
+          <div class="book-room-no">ห้อง ${room.room_no}</div>
+          <div class="book-room-floor">ชั้น ${room.floor} · ห้องเดี่ยว</div>
+        </div>
+        <div class="book-badge-free">ว่าง</div>
+      </div>
+      <div class="book-price-list">
+        <div class="book-price-row"><span class="book-price-label">ค่าเช่า/เดือน</span><span class="book-price-val">${Number(room.rent).toLocaleString()} บาท</span></div>
+        <div class="book-price-row"><span class="book-price-label">ค่าไฟ</span><span class="book-price-val">${room.electric_rate} บาท/หน่วย</span></div>
+        <div class="book-price-row"><span class="book-price-label">ค่าน้ำ</span><span class="book-price-val">${room.water_rate} บาท/หน่วย</span></div>
+        <div class="book-price-row"><span class="book-price-label">เงินประกัน</span><span class="book-price-val">3,000 บาท</span></div>
+      </div>
+      <div class="book-total">
+        <span class="book-total-label">ยอดชำระครั้งแรก</span>
+        <span class="book-total-val">${(Number(room.rent)+3000).toLocaleString()} บาท</span>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;height:48px;" onclick="goRegister('${room.room_no}')">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        ลงทะเบียนจองห้องนี้
+      </button>`;
+  } else {
+    const vacant = allRooms.filter(r=>r.status==='vacant');
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--n500);margin-bottom:16px">เลือกห้องที่ต้องการจอง (${vacant.length} ห้องว่าง)</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:320px;overflow-y:auto;padding-right:4px">
+        ${vacant.map(r=>`
+          <div onclick="openBookModal('${r.id}')" style="background:var(--o100);border:1.5px solid var(--o300);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='var(--o200)'" onmouseout="this.style.background='var(--o100)'">
+            <div style="font-family:'Prompt',sans-serif;font-size:16px;font-weight:700;color:var(--o700)">ห้อง ${r.room_no}</div>
+            <div style="font-size:11px;color:var(--n500);margin-top:2px">ชั้น ${r.floor}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--n700);margin-top:8px">${Number(r.rent).toLocaleString()} บ./เดือน</div>
+          </div>
+        `).join('')}
+        ${!vacant.length?'<div style="grid-column:span 2;text-align:center;padding:20px;color:var(--n300)">ไม่มีห้องว่างในขณะนี้</div>':''}
+      </div>`;
+  }
+  document.getElementById('bookModal').classList.add('show');
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+function goRegister(roomNo) {
+  sessionStorage.setItem('preselect_room', roomNo);
+  window.location.href='registorKPdomitory.html';
+}
+
+// close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('show'); });
+});
+
+// Restore username
+window.addEventListener('DOMContentLoaded',()=>{
+  const s=localStorage.getItem('kp_username');
+  if(s){document.getElementById('loginUser').value=s;document.getElementById('remMe').checked=true;}
+});
+
+// ═══ INIT ══════════════════════════════════════
+loadRooms();
+</script>
+</body>
+</html>

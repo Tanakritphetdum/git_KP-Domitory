@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KP Dormitory — หน้าหลัก</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sarabun',sans-serif;background:#F9FAFB;color:#111827;}
+  .kp-main-content{margin-left:240px;min-height:100vh;transition:margin-left .3s;}
+  .topbar{background:#fff;border-bottom:1px solid #F3F4F6;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .topbar-title{font-size:17px;font-weight:600;color:#111827;font-family:'Prompt',sans-serif;}
+  .topbar-breadcrumb{font-size:12px;color:#9CA3AF;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .topbar-date{font-size:12px;color:#9CA3AF;}
+  .room-badge{background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1px solid #FED7AA;color:#EA580C;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;font-family:'Prompt',sans-serif;}
+  .page-content{padding:28px;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+  .stat-card{background:#fff;border:1px solid #F3F4F6;border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;}
+  .stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+  .stat-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .stat-icon.orange{background:#FFF7ED;color:#F97316;}
+  .stat-icon.green{background:#F0FDF4;color:#16A34A;}
+  .stat-icon.blue{background:#EFF6FF;color:#2563EB;}
+  .stat-icon.red{background:#FEF2F2;color:#DC2626;}
+  .stat-label{font-size:12px;color:#9CA3AF;font-weight:500;}
+  .stat-value{font-size:28px;font-weight:700;color:#111827;font-family:'Prompt',sans-serif;line-height:1;}
+  .stat-trend{font-size:12px;font-weight:500;}
+  .trend-up{color:#16A34A;}
+  .section-title{font-size:15px;font-weight:600;color:#111827;font-family:'Prompt',sans-serif;margin-bottom:14px;}
+  .section-sub{font-size:12px;color:#9CA3AF;font-weight:400;margin-left:8px;}
+  .info-card{background:#fff;border:1px solid #F3F4F6;border-radius:16px;overflow:hidden;}
+  .info-card-header{padding:16px 20px;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;}
+  .kp-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .kp-table th{background:#F9FAFB;padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #F3F4F6;}
+  .kp-table td{padding:12px 16px;border-bottom:1px solid #F9FAFB;color:#374151;vertical-align:middle;}
+  .kp-table tr:last-child td{border-bottom:none;}
+  .kp-table tr:hover td{background:#FAFAFA;}
+  .status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+  .status-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .status-occupied{background:#F0FDF4;color:#16A34A;}
+  .status-vacant{background:#EFF6FF;color:#2563EB;}
+  .status-maintenance{background:#FEF9C3;color:#CA8A04;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  .quick-btn{background:#fff;border:1px solid #F3F4F6;border-radius:12px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .18s;text-decoration:none;display:block;}
+  .quick-btn:hover{border-color:#FED7AA;background:#FFF7ED;}
+  .quick-btn-icon{margin-bottom:8px;display:flex;justify-content:center;}
+  .quick-btn-icon svg{width:24px;height:24px;stroke:#F97316;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .quick-btn-label{font-size:12px;color:#374151;font-weight:500;}
+  .user-strip{background:linear-gradient(135deg,#0F1E35 0%,#1A2E4A 100%);border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:28px;color:#fff;}
+  .user-strip-avatar{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#F97316,#EA580C);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;font-family:'Prompt',sans-serif;flex-shrink:0;}
+  .user-strip-info{flex:1;}
+  .user-strip-name{font-size:16px;font-weight:600;font-family:'Prompt',sans-serif;}
+  .user-strip-sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
+  .user-strip-room{background:rgba(249,115,22,0.2);border:1px solid rgba(249,115,22,0.4);border-radius:10px;padding:8px 16px;text-align:center;}
+  .user-strip-room-label{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.08em;}
+  .user-strip-room-val{font-size:20px;font-weight:700;color:#FED7AA;font-family:'Prompt',sans-serif;}
+  @media(max-width:768px){.kp-main-content{margin-left:0;}.page-content{padding:70px 16px 24px;}.two-col{grid-template-columns:1fr;}.topbar{padding:0 16px 0 60px;}.user-strip{flex-wrap:wrap;}}
+  @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}}
+
+/* ── RESPONSIVE MAIN ─── */
+@media(max-width:768px){
+  .kp-main-content{margin-left:0!important;}
+  .page-content{padding:70px 12px 24px!important;}
+  .topbar{padding:0 12px 0 56px!important;}
+  .two-col{grid-template-columns:1fr!important;}
+  .stats-grid{grid-template-columns:1fr 1fr!important;gap:10px;}
+  .stat-card{padding:14px 16px;}
+  .stat-value{font-size:22px;}
+  .user-strip{flex-wrap:wrap;gap:12px;padding:16px;}
+  .user-strip-room{width:100%;text-align:left;padding:10px 14px;}
+  .quick-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .kp-table{font-size:12px;}
+  .kp-table th,.kp-table td{padding:8px 10px;}
+}
+@media(min-width:769px) and (max-width:1024px){
+  .kp-main-content{margin-left:240px;}
+  .two-col{grid-template-columns:1fr!important;}
+}
+</style>
+</head>
+<body>
+<div id="sidebar-container"></div>
+<div class="kp-main-content">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">หน้าหลัก</div>
+      <div class="topbar-breadcrumb">KP Dormitory · Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="currentDate"></div>
+      <div class="room-badge" id="topRoomId">ห้อง —</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="user-strip" id="userStrip">
+      <div class="user-strip-avatar" id="stripAvatar">KP</div>
+      <div class="user-strip-info">
+        <div class="user-strip-name" id="stripName">กำลังโหลด...</div>
+        <div class="user-strip-sub" id="stripSub">KP Dormitory Management System</div>
+      </div>
+      <div class="user-strip-room">
+        <div class="user-strip-room-label">รหัสห้อง</div>
+        <div class="user-strip-room-val" id="stripRoom">—</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon orange"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div><div class="stat-label">ห้องทั้งหมด</div><div class="stat-value">24</div></div>
+        <div class="stat-trend trend-up">↑ 2 ห้องใหม่เดือนนี้</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div><div class="stat-label">ผู้เช่าปัจจุบัน</div><div class="stat-value">18</div></div>
+        <div class="stat-trend trend-up">↑ 3 คนเดือนนี้</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="stat-label">ห้องว่าง</div><div class="stat-value">6</div></div>
+        <div class="stat-trend" style="color:#9CA3AF">พร้อมรับผู้เช่า</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div><div class="stat-label">รายได้เดือนนี้</div><div class="stat-value">27,000</div></div>
+        <div class="stat-trend trend-up">↑ 1,500 จากเดือนที่แล้ว</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="info-card">
+        <div class="info-card-header">
+          <span class="section-title" style="margin:0">ผู้เช่าล่าสุด <span class="section-sub">5 รายการ</span></span>
+        </div>
+        <table class="kp-table">
+          <thead><tr><th>ชื่อ</th><th>ห้อง</th><th>สถานะ</th></tr></thead>
+          <tbody>
+            <tr><td><div style="font-weight:500">สมชาย ใจดี</div><div style="font-size:11px;color:#9CA3AF">KP-847291</div></td><td><span style="font-weight:600;color:#F97316">201</span></td><td><span class="status-badge status-occupied">มีผู้เช่า</span></td></tr>
+            <tr><td><div style="font-weight:500">มาลี สวยงาม</div><div style="font-size:11px;color:#9CA3AF">KP-847288</div></td><td><span style="font-weight:600;color:#F97316">103</span></td><td><span class="status-badge status-occupied">มีผู้เช่า</span></td></tr>
+            <tr><td><div style="font-weight:500">วิชัย รักดี</div><div style="font-size:11px;color:#9CA3AF">KP-847280</div></td><td><span style="font-weight:600;color:#F97316">305</span></td><td><span class="status-badge status-occupied">มีผู้เช่า</span></td></tr>
+            <tr><td><div style="font-weight:500">ห้องว่าง</div><div style="font-size:11px;color:#9CA3AF">—</div></td><td><span style="font-weight:600;color:#2563EB">102</span></td><td><span class="status-badge status-vacant">ว่าง</span></td></tr>
+            <tr><td><div style="font-weight:500">ซ่อมบำรุง</div><div style="font-size:11px;color:#9CA3AF">—</div></td><td><span style="font-weight:600;color:#CA8A04">204</span></td><td><span class="status-badge status-maintenance">ซ่อมบำรุง</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="info-card">
+          <div class="info-card-header"><span class="section-title" style="margin:0">Quick Actions</span></div>
+          <div style="padding:16px">
+            <div class="quick-grid">
+              <a href="registorKPdomitory.html" class="quick-btn">
+                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+                <div class="quick-btn-label">เพิ่มผู้เช่า</div>
+              </a>
+              <a href="rooms.html" class="quick-btn">
+                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                <div class="quick-btn-label">จัดการห้อง</div>
+              </a>
+              <a href="#" class="quick-btn">
+                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                <div class="quick-btn-label">รายงาน</div>
+              </a>
+              <a href="#" class="quick-btn">
+                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg></div>
+                <div class="quick-btn-label">แจ้งค่าเช่า</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-header"><span class="section-title" style="margin:0">ข้อมูล Session</span></div>
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:6px" id="sessionInfo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="menu.js"></script>
+<script>
+  KPMenu.render('sidebar-container');
+  const user = KPMenu.getSession();
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('th-TH',{weekday:'short',year:'numeric',month:'long',day:'numeric'});
+  if (user) {
+    document.getElementById('topRoomId').textContent = 'ห้อง ' + (user.res_roomid||'—');
+    const name = user.res_name || user.res_users || 'ผู้ใช้';
+    const p = name.trim().split(' ');
+    const letters = p.length>=2?(p[0][0]+p[1][0]).toUpperCase():name.substring(0,2).toUpperCase();
+    document.getElementById('stripAvatar').textContent = letters;
+    document.getElementById('stripName').textContent = name;
+    document.getElementById('stripSub').textContent = (user.res_email||'') + (user.res_type?' · Type '+user.res_type:'');
+    document.getElementById('stripRoom').textContent = user.res_roomid||'—';
+    const fields=[['res_roomid','Room ID'],['res_users','Username'],['res_name','ชื่อ'],['res_email','อีเมล'],['res_type','ประเภท']];
+    document.getElementById('sessionInfo').innerHTML = fields.map(([k,label])=>`
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #F9FAFB">
+        <span style="color:#9CA3AF;font-weight:500">${label}</span>
+        <span style="color:#374151;font-weight:600">${user[k]||'—'}</span>
+      </div>`).join('');
+
+   
+  }
+</script>
+</body>
+</html>

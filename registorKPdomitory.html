@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สมัครระบบหอพัก KP Dormitory</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--border:#E5E7EB;--text-main:#111827;--text-sub:#374151;}
+  *{box-sizing:border-box;}
+  body{font-family:'Sarabun',sans-serif;background:#F9FAFB;color:var(--text-main);min-height:100vh;}
+  .hero{background:linear-gradient(135deg,#F97316 0%,#EA580C 60%,#C2410C 100%);position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);pointer-events:none;}
+  .gold-line{width:48px;height:3px;background:#fff;border-radius:2px;margin:0 auto 1rem;}
+  .form-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.75rem;margin-bottom:1.25rem;transition:box-shadow 0.2s;}
+  .form-card:hover{box-shadow:0 4px 24px rgba(0,0,0,0.07);}
+  .section-badge{display:inline-flex;align-items:center;gap:8px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:5px 12px;margin-bottom:1.25rem;}
+  .section-badge-num{background:#F97316;color:#fff;font-size:11px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .section-badge-text{font-size:13px;font-weight:600;color:#C2410C;font-family:'Prompt',sans-serif;}
+  label{display:block;font-size:13px;font-weight:500;color:var(--text-sub);margin-bottom:5px;}
+  .req{color:#C0392B;margin-left:2px;}
+  input,select,textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Sarabun',sans-serif;color:var(--text-main);background:#fff;transition:border-color 0.18s,box-shadow 0.18s;outline:none;appearance:none;-webkit-appearance:none;}
+  input:focus,select:focus,textarea:focus{border-color:#F97316;box-shadow:0 0 0 3px rgba(249,115,22,0.12);}
+  input.err-field,select.err-field{border-color:#E74C3C !important;box-shadow:0 0 0 3px rgba(231,76,60,0.08);}
+  .hint{font-size:11px;color:#9BA3B2;margin-top:4px;}
+  .err-label{font-size:11px;color:#E74C3C;margin-top:4px;display:none;}
+  textarea{resize:none;height:72px;}
+  .select-wrap{position:relative;}
+  .select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#F97316;pointer-events:none;font-size:13px;}
+  .select-wrap select{padding-right:36px;}
+  .radio-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .radio-opt{flex:1;min-width:100px;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-main);user-select:none;}
+  .radio-opt:hover{border-color:#FB923C;background:#FFF7ED;}
+  .radio-opt input[type="radio"]{display:none;}
+  .radio-opt.active{border-color:#F97316;background:#FFF7ED;color:#C2410C;font-weight:600;}
+  .radio-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all 0.18s;display:flex;align-items:center;justify-content:center;}
+  .radio-opt.active .radio-dot{border-color:#F97316;background:#F97316;}
+  .radio-opt.active .radio-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%;}
+  .readonly-field{background:#FFF7ED !important;color:#C2410C !important;font-weight:600;cursor:not-allowed;border-color:#FED7AA !important;}
+  .btn-submit{width:100%;background:linear-gradient(135deg,#F97316,#EA580C);color:#fff;border:none;border-radius:12px;padding:15px 24px;font-size:15px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+  .btn-submit:hover{background:linear-gradient(135deg,#EA580C,#C2410C);}
+  .btn-submit:disabled{opacity:0.6;cursor:not-allowed;}
+  .step-bar{display:flex;align-items:center;gap:0;margin-bottom:2rem;}
+  .step-item{display:flex;align-items:center;flex:1;}
+  .step-circle{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-sub);flex-shrink:0;transition:all 0.3s;z-index:1;}
+  .step-circle.done{border-color:#F97316;background:#F97316;color:#fff;}
+  .step-line{flex:1;height:2px;background:var(--border);transition:background 0.3s;}
+  .step-line.done{background:#F97316;}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111827;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;transition:transform 0.3s ease;z-index:9999;white-space:nowrap;border-left:4px solid #F97316;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+  #toast.success{border-color:#27AE60;}
+  #toast.error-t{border-color:#E74C3C;}
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #success-screen{display:none;background:#fff;border-radius:20px;padding:3rem 2rem;text-align:center;border:1px solid var(--border);}
+  .checkmark{width:72px;height:72px;border-radius:50%;background:#E8F8EF;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:32px;}
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    .hero{padding:20px 16px 24px !important;}
+    .form-card{padding:1rem;}
+    .radio-group{flex-direction:column;gap:8px;}
+    .radio-opt{min-width:unset;width:100%;}
+    .step-circle{width:26px;height:26px;font-size:11px;}
+    .step-line{height:1px;}
+    #syncBtn{font-size:11px !important;padding:0 10px !important;}
+  }
+  @media(max-width:480px){
+    .step-bar{overflow:hidden;}
+    .form-card{border-radius:12px;}
+    #success-screen{padding:2rem 1rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero px-4 py-10 text-center relative z-10">
+  <div class="max-w-lg mx-auto">
+    <div class="gold-line"></div>
+    <p class="text-xs font-semibold tracking-widest mb-2" style="color:rgba(255,255,255,0.85);font-family:'Prompt',sans-serif;letter-spacing:.15em">KP DORMITORY SYSTEM</p>
+    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2" style="font-family:'Prompt',sans-serif">สมัครระบบหอพัก KP Dormitory</h1>
+    <p class="text-sm" style="color:rgba(255,255,255,0.55)">กรอกข้อมูลให้ครบถ้วน เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+    <a href="kpdormlogin.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:rgba(255,255,255,0.7);font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 14px;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">← กลับไปหน้าหลัก</a>
+  </div>
+</div>
+
+<!-- Form -->
+<div class="max-w-2xl mx-auto px-4 py-8">
+
+  <!-- Progress Bar -->
+  <div class="step-bar mb-8">
+    <div class="step-item"><div class="step-circle" id="s1">1</div><div class="step-line" id="l1"></div></div>
+    <div class="step-item"><div class="step-circle" id="s2">2</div><div class="step-line" id="l2"></div></div>
+    <div class="step-item"><div class="step-circle" id="s3">3</div><div class="step-line" id="l3"></div></div>
+    <div class="step-item"><div class="step-circle" id="s4">4</div><div class="step-line" id="l4"></div></div>
+    <div class="step-item" style="flex:0"><div class="step-circle" id="s5">5</div></div>
+  </div>
+
+  <form id="regForm" novalidate>
+
+    <!-- 1: ข้อมูลส่วนตัว -->
+    <div class="form-card" id="card1">
+      <div class="section-badge"><div class="section-badge-num">1</div><span class="section-badge-text">ข้อมูลส่วนตัว</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>ชื่อ <span class="req">*</span></label>
+          <input type="text" id="fname" placeholder="สมชาย">
+          <div class="err-label" id="err-fname">กรุณากรอกชื่อ</div>
+        </div>
+        <div>
+          <label>นามสกุล <span class="req">*</span></label>
+          <input type="text" id="lname" placeholder="ใจดี">
+          <div class="err-label" id="err-lname">กรุณากรอกนามสกุล</div>
+        </div>
+        <div>
+          <label>เลขบัตรประชาชน <span class="req">*</span></label>
+          <input type="text" id="idcard" placeholder="1-xxxx-xxxxx-xx-x" maxlength="17">
+          <div class="err-label" id="err-idcard">กรุณากรอกเลขบัตรประชาชน</div>
+        </div>
+        <div>
+          <label>วันเกิด <span class="req">*</span></label>
+          <input type="date" id="dob">
+          <div class="err-label" id="err-dob">กรุณาเลือกวันเกิด</div>
+        </div>
+        <div>
+          <label>เบอร์โทรศัพท์ <span class="req">*</span></label>
+          <input type="tel" id="phone" placeholder="08x-xxx-xxxx">
+          <div class="err-label" id="err-phone">กรุณากรอกเบอร์โทรศัพท์</div>
+        </div>
+        <div>
+          <label>อีเมล <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="email@example.com">
+          <div class="hint">ใช้รับแจ้งเตือนค่าเช่ารายเดือน</div>
+          <div class="err-label" id="err-email">กรุณากรอกอีเมลให้ถูกต้อง</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2: ข้อมูลห้องพัก -->
+    <div class="form-card" id="card2">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;">
+        <div class="section-badge" style="margin-bottom:0"><div class="section-badge-num">2</div><span class="section-badge-text">ข้อมูลห้องพัก</span></div>
+        <button type="button" id="syncBtn" onclick="syncRooms()" style="display:flex;align-items:center;gap:6px;height:34px;padding:0 14px;background:linear-gradient(135deg,#F97316,#EA580C);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;">
+          <svg id="syncIcon" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          <span id="syncText">ซิงค์ห้องว่าง</span>
+        </button>
+      </div>
+      <div id="roomStatusBar" style="display:none;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;">
+        <span id="roomStatusText"></span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>เลขห้องที่ต้องการ <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="room_no" onchange="onRoomSelect()">
+              <option value="">กด "ซิงค์ห้องว่าง" เพื่อโหลดห้อง...</option>
+            </select>
+          </div>
+          <div class="hint" id="roomHint">กดปุ่มซิงค์เพื่อดึงห้องว่างจากระบบ</div>
+          <div class="err-label" id="err-room_no">กรุณาเลือกห้องพัก</div>
+        </div>
+        <div>
+          <label>ชั้น</label>
+          <div class="select-wrap">
+            <select id="floor"><option value="">เลือกชั้น...</option><option>1</option><option>2</option></select>
+          </div>
+        </div>
+        <div class="md:col-span-2">
+          <label>ประเภทห้อง</label>
+          <div class="radio-group mt-1">
+            <label class="radio-opt active" onclick="selectRadio(this,'room_type','single')">
+              <input type="radio" name="room_type" value="single" checked><div class="radio-dot"></div> ห้องเดี่ยว
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>วันที่ Check-in <span class="req">*</span></label>
+          <input type="date" id="checkin_date">
+          <div class="err-label" id="err-checkin_date">กรุณาเลือกวันที่ Check-in</div>
+        </div>
+        <div>
+          <label>ระยะเวลาสัญญา <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="contract_duration">
+              <option value="">เลือก...</option>
+              <option value="3">3 เดือน</option>
+              <option value="6">6 เดือน</option>
+              <option value="12">12 เดือน</option>
+            </select>
+          </div>
+          <div class="err-label" id="err-contract_duration">กรุณาเลือกระยะเวลาสัญญา</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3: ค่าใช้จ่าย -->
+    <div class="form-card" id="card3">
+      <div class="section-badge"><div class="section-badge-num">3</div><span class="section-badge-text">ค่าใช้จ่าย</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>ค่าเช่า/เดือน (บาท)</label>
+          <input type="number" id="rent" value="1500" readonly class="readonly-field">
+          <div class="hint">กำหนดโดยหอพัก</div>
+        </div>
+        <div>
+          <label>เงินประกัน (บาท)</label>
+          <input type="number" id="deposit" value="3000" readonly class="readonly-field">
+          <div class="hint">= 2 เท่าของค่าเช่า</div>
+        </div>
+        <div>
+          <label>ค่าไฟ (บาท/หน่วย)</label>
+          <input type="number" id="electric_rate" value="5" readonly class="readonly-field">
+        </div>
+        <div>
+          <label>ค่าน้ำ (บาท/หน่วย)</label>
+          <input type="number" id="water_rate" value="18" readonly class="readonly-field">
+        </div>
+        <!-- Summary -->
+        <div class="md:col-span-2" style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:#92400E;font-weight:500;">ยอดชำระครั้งแรก (ค่าเช่า + ประกัน)</span>
+          <span id="totalAmount" style="font-size:18px;font-weight:700;color:#C2410C;font-family:'Prompt',sans-serif;">4,500 บาท</span>
+        </div>
+        <div class="md:col-span-2">
+          <label>วิธีชำระเงิน <span class="req">*</span></label>
+          <div class="radio-group mt-1">
+            <label class="radio-opt active" onclick="selectRadio(this,'payment_method','transfer')"><input type="radio" name="payment_method" value="transfer" checked><div class="radio-dot"></div>โอนเงิน</label>
+            <label class="radio-opt" onclick="selectRadio(this,'payment_method','cash')"><input type="radio" name="payment_method" value="cash"><div class="radio-dot"></div>เงินสด</label>
+            <label class="radio-opt" onclick="selectRadio(this,'payment_method','promptpay')"><input type="radio" name="payment_method" value="promptpay"><div class="radio-dot"></div>PromptPay</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4: ผู้ติดต่อฉุกเฉิน -->
+    <div class="form-card" id="card4">
+      <div class="section-badge"><div class="section-badge-num">4</div><span class="section-badge-text">ผู้ติดต่อฉุกเฉิน</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>ชื่อ-นามสกุล <span class="req">*</span></label>
+          <input type="text" id="emergency_name" placeholder="ผู้ติดต่อฉุกเฉิน">
+          <div class="err-label" id="err-emergency_name">กรุณากรอกชื่อผู้ติดต่อ</div>
+        </div>
+        <div>
+          <label>ความสัมพันธ์ <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="emergency_relation">
+              <option value="">เลือก...</option>
+              <option>บิดา / มารดา</option><option>พี่ / น้อง</option><option>คู่สมรส</option><option>เพื่อน</option><option>อื่น ๆ</option>
+            </select>
+          </div>
+          <div class="err-label" id="err-emergency_relation">กรุณาเลือกความสัมพันธ์</div>
+        </div>
+        <div class="md:col-span-2">
+          <label>เบอร์โทรฉุกเฉิน <span class="req">*</span></label>
+          <input type="tel" id="emergency_phone" placeholder="08x-xxx-xxxx">
+          <div class="err-label" id="err-emergency_phone">กรุณากรอกเบอร์โทรฉุกเฉิน</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5: ข้อมูลเพิ่มเติม -->
+    <div class="form-card" id="card5">
+      <div class="section-badge"><div class="section-badge-num">5</div><span class="section-badge-text">ข้อมูลเพิ่มเติม</span></div>
+      <div class="grid grid-cols-1 gap-4">
+        <div><label>ยานพาหนะ</label><input type="text" id="vehicle" placeholder="เช่น Honda PCX ทะเบียน กข-1234"></div>
+        <div>
+          <label>มีสัตว์เลี้ยงหรือไม่</label>
+          <div class="radio-group mt-1">
+            <label class="radio-opt" onclick="selectRadio(this,'has_pet','no')"><input type="radio" name="has_pet" value="no"><div class="radio-dot"></div>ไม่มี</label>
+            <label class="radio-opt" onclick="selectRadio(this,'has_pet','yes')"><input type="radio" name="has_pet" value="yes"><div class="radio-dot"></div>มี</label>
+          </div>
+        </div>
+        <div><label>หมายเหตุ</label><textarea id="note" placeholder="เช่น ต้องการที่จอดรถ, แพ้สารบางอย่าง ฯลฯ"></textarea></div>
+      </div>
+    </div>
+
+    <!-- Consent -->
+    <div class="mb-6">
+      <label class="flex items-start gap-3 cursor-pointer">
+        <input type="checkbox" id="consent" class="mt-1 w-4 h-4 flex-shrink-0" style="accent-color:#F97316;">
+        <span class="text-sm" style="color:#374151">
+          ข้าพเจ้ายินยอมให้หอพัก KP Dormitory จัดเก็บและใช้ข้อมูลส่วนตัวเพื่อวัตถุประสงค์การลงทะเบียนเข้าพัก <span class="req">*</span>
+        </span>
+      </label>
+      <div class="err-label" id="err-consent" style="margin-left:28px;">กรุณายอมรับเงื่อนไข</div>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn-submit">ส่งใบสมัคร</button>
+    <p class="text-center text-xs mt-4" style="color:var(--text-sub)">ข้อมูลถูกเข้ารหัสและส่งอย่างปลอดภัย • เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+  </form>
+
+  <!-- Success -->
+  <div id="success-screen">
+    <div class="checkmark">✓</div>
+    <h2 class="text-xl font-semibold mb-2" style="font-family:'Prompt',sans-serif;color:#111827">ส่งใบสมัครสำเร็จ!</h2>
+    <p class="text-sm mb-1" style="color:var(--text-sub)">ขอบคุณที่สนใจ KP Dormitory</p>
+    <p class="text-sm mb-6" style="color:var(--text-sub)">เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+    <div class="inline-block px-6 py-3 rounded-xl mb-6" style="background:#FFF7ED;border:1px solid #FED7AA">
+      <div class="text-xs mb-1" style="color:#C2410C">หมายเลขอ้างอิง</div>
+      <div class="font-bold text-lg" style="color:#111827;font-family:'Prompt',sans-serif" id="ref-num">KP-000000</div>
+    </div>
+    <br>
+    <button onclick="resetForm()" class="btn-submit" style="max-width:220px;margin:0 auto">สมัครใหม่</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div class="text-center py-8" style="border-top:1px solid #E5E7EB;margin-top:2rem">
+  <p class="text-xs" style="color:#B0B8C4">© 2025 KP Dormitory · สอบถามข้อมูลเพิ่มเติม โทร 0xx-xxx-xxxx</p>
+</div>
+
+<script>
+// ─── WEBHOOKS ───────────────────────────────────
+const WEBHOOK_REGISTER = 'https://tanakritphetdum.app.n8n.cloud/webhook/resgistor-kp-domitory';
+const WEBHOOK_ROOMS    = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-get';
+
+// ─── STATE ──────────────────────────────────────
+let vacantRooms = [];
+
+// ─── REQUIRED FIELDS (ไม่รวม readonly) ──────────
+const REQUIRED_FIELDS = [
+  { id: 'fname',               label: 'ชื่อ' },
+  { id: 'lname',               label: 'นามสกุล' },
+  { id: 'idcard',              label: 'เลขบัตรประชาชน' },
+  { id: 'dob',                 label: 'วันเกิด' },
+  { id: 'phone',               label: 'เบอร์โทรศัพท์' },
+  { id: 'email',               label: 'อีเมล' },
+  { id: 'room_no',             label: 'ห้องพัก' },
+  { id: 'checkin_date',        label: 'วันที่ Check-in' },
+  { id: 'contract_duration',   label: 'ระยะเวลาสัญญา' },
+  { id: 'emergency_name',      label: 'ชื่อผู้ติดต่อฉุกเฉิน' },
+  { id: 'emergency_relation',  label: 'ความสัมพันธ์' },
+  { id: 'emergency_phone',     label: 'เบอร์โทรฉุกเฉิน' },
+];
+
+// ─── HELPERS ────────────────────────────────────
+function selectRadio(label, name, value) {
+  document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+    r.closest('.radio-opt').classList.remove('active');
+  });
+  label.classList.add('active');
+  label.querySelector('input').checked = true;
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type === 'success' ? 'success' : type === 'error' ? 'error-t' : '');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function clearErrors() {
+  document.querySelectorAll('.err-field').forEach(el => el.classList.remove('err-field'));
+  document.querySelectorAll('.err-label').forEach(el => el.style.display = 'none');
+}
+
+// ─── PROGRESS BAR ───────────────────────────────
+function updateSteps() {
+  // Section fields mapping (ไม่รวม readonly)
+  const sections = [
+    ['fname','lname','idcard','dob','phone','email'],
+    ['room_no','checkin_date','contract_duration'],
+    [],  // section 3 ไม่มี required manual
+    ['emergency_name','emergency_relation','emergency_phone'],
+    [],  // section 5 optional ทั้งหมด
+  ];
+  sections.forEach((fields, i) => {
+    let filled = true;
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el || !el.value.trim()) filled = false;
+    });
+    // section 3 & 5 ถือว่าผ่านเสมอ
+    if (i === 2 || i === 4) filled = true;
+    const circle = document.getElementById('s' + (i + 1));
+    if (filled) { circle.classList.add('done'); circle.textContent = '✓'; }
+    else { circle.classList.remove('done'); circle.textContent = (i + 1); }
+    if (i < 4) {
+      const line = document.getElementById('l' + (i + 1));
+      if (filled) line.classList.add('done'); else line.classList.remove('done');
+    }
+  });
+  updateTotal();
+}
+
+function updateTotal() {
+  const rent = Number(document.getElementById('rent').value) || 1500;
+  const dep  = Number(document.getElementById('deposit').value) || 3000;
+  document.getElementById('totalAmount').textContent = (rent + dep).toLocaleString() + ' บาท';
+}
+
+// Listen changes
+['fname','lname','idcard','dob','phone','email','room_no','checkin_date','contract_duration',
+ 'emergency_name','emergency_relation','emergency_phone','vehicle','note'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('input', () => { el.classList.remove('err-field'); updateSteps(); });
+    el.addEventListener('change', () => { el.classList.remove('err-field'); updateSteps(); });
+  }
+});
+
+// ID card auto-format
+document.getElementById('idcard').addEventListener('input', function() {
+  let v = this.value.replace(/[^0-9]/g, '');
+  let out = '';
+  if (v.length > 0)  out += v.substring(0, 1);
+  if (v.length > 1)  out += '-' + v.substring(1, 5);
+  if (v.length > 5)  out += '-' + v.substring(5, 10);
+  if (v.length > 10) out += '-' + v.substring(10, 12);
+  if (v.length > 12) out += '-' + v.substring(12, 13);
+  this.value = out;
+});
+
+// ─── SYNC ROOMS ─────────────────────────────────
+async function syncRooms() {
+  const btn  = document.getElementById('syncBtn');
+  const icon = document.getElementById('syncIcon');
+  const text = document.getElementById('syncText');
+  const bar  = document.getElementById('roomStatusBar');
+  const hint = document.getElementById('roomHint');
+  const sel  = document.getElementById('room_no');
+
+  icon.style.animation = 'spin 0.7s linear infinite';
+  text.textContent = 'กำลังโหลด...';
+  btn.disabled = true;
+  bar.style.display = 'none';
+
+  try {
+    const res = await fetch(WEBHOOK_ROOMS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get_all' })
+    });
+    const raw = await res.json();
+    const arr = Array.isArray(raw) ? raw : (raw.data || []);
+
+    vacantRooms = arr.filter(r => {
+      const st = String(r.status || '').toLowerCase();
+      return st === 'vacant' || st === '' || st === 'empty';
+    }).map(r => ({
+      room_no:       String(r.room_no || '').trim(),
+      floor:         String(r.floor || '').replace('ชั้น ', '').replace('ชั้น', '').trim(),
+      rent:          Number(r.rent) || 1500,
+      electric_rate: Number(r.electric_rate) || 5,
+      water_rate:    Number(r.water_rate) || 18,
+    })).filter(r => r.room_no);
+
+    sel.innerHTML = '<option value="">เลือกห้อง...</option>';
+    if (!vacantRooms.length) {
+      sel.innerHTML = '<option value="">ไม่มีห้องว่างในขณะนี้</option>';
+      bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;';
+      document.getElementById('roomStatusText').textContent = 'ไม่มีห้องว่าง กรุณาติดต่อเจ้าหน้าที่';
+    } else {
+      vacantRooms.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.room_no;
+        opt.textContent = 'ห้อง ' + r.room_no + ' (ชั้น ' + r.floor + ')';
+        sel.appendChild(opt);
+      });
+      bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;';
+      document.getElementById('roomStatusText').textContent = 'พบห้องว่าง ' + vacantRooms.length + ' ห้อง — เลือกห้องที่ต้องการได้เลย';
+    }
+    hint.textContent = 'อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH');
+  } catch(e) {
+    bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;';
+    document.getElementById('roomStatusText').textContent = 'โหลดข้อมูลไม่ได้ กรุณาลองใหม่';
+  } finally {
+    icon.style.animation = '';
+    text.textContent = 'ซิงค์ห้องว่าง';
+    btn.disabled = false;
+  }
+}
+
+function onRoomSelect() {
+  const val  = document.getElementById('room_no').value;
+  const room = vacantRooms.find(r => r.room_no === val);
+  if (room) {
+    document.getElementById('floor').value         = room.floor;
+    document.getElementById('rent').value          = room.rent;
+    document.getElementById('electric_rate').value = room.electric_rate;
+    document.getElementById('water_rate').value    = room.water_rate;
+  }
+  document.getElementById('room_no').classList.remove('err-field');
+  updateSteps();
+}
+
+// ─── VALIDATE ───────────────────────────────────
+function validateForm() {
+  clearErrors();
+  let ok = true;
+  let firstErr = null;
+
+  // Required fields
+  REQUIRED_FIELDS.forEach(({ id, label }) => {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) {
+      el && el.classList.add('err-field');
+      const errEl = document.getElementById('err-' + id);
+      if (errEl) errEl.style.display = 'block';
+      if (!firstErr) firstErr = el;
+      ok = false;
+    }
+  });
+
+  // Email format
+  const email = document.getElementById('email').value;
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('email').classList.add('err-field');
+    document.getElementById('err-email').textContent = 'รูปแบบอีเมลไม่ถูกต้อง';
+    document.getElementById('err-email').style.display = 'block';
+    if (!firstErr) firstErr = document.getElementById('email');
+    ok = false;
+  }
+
+  // Consent
+  if (!document.getElementById('consent').checked) {
+    document.getElementById('err-consent').style.display = 'block';
+    if (!firstErr) firstErr = document.getElementById('consent');
+    ok = false;
+  }
+
+  if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return ok;
+}
+
+// ─── COLLECT DATA ───────────────────────────────
+function collectData() {
+  const data = {};
+  ['fname','lname','idcard','dob','phone','email',
+   'room_no','floor','checkin_date','contract_duration',
+   'rent','deposit','electric_rate','water_rate',
+   'emergency_name','emergency_relation','emergency_phone',
+   'vehicle','note'].forEach(id => {
+    const el = document.getElementById(id);
+    data[id] = el ? el.value.trim() : '';
+  });
+  ['room_type','payment_method','has_pet'].forEach(name => {
+    const el = document.querySelector(`[name="${name}"]:checked`);
+    data[name] = el ? el.value : '';
+  });
+  data.submitted_at = new Date().toISOString();
+  data.ref = 'KP-' + Date.now().toString().slice(-6);
+  return data;
+}
+
+// ─── SUBMIT ─────────────────────────────────────
+document.getElementById('regForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!validateForm()) {
+    showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error');
+    return;
+  }
+  const btn  = document.getElementById('submitBtn');
+  const data = collectData();
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> กำลังส่งข้อมูล...';
+  try {
+    const res = await fetch(WEBHOOK_REGISTER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    document.getElementById('regForm').style.display = 'none';
+    document.querySelector('.step-bar').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    document.getElementById('ref-num').textContent = data.ref;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch(err) {
+    showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
+    btn.disabled = false;
+    btn.textContent = 'ส่งใบสมัคร';
+  }
+});
+
+// ─── RESET ──────────────────────────────────────
+function resetForm() {
+  document.getElementById('regForm').reset();
+  document.getElementById('regForm').style.display = 'block';
+  document.querySelector('.step-bar').style.display = 'flex';
+  document.getElementById('success-screen').style.display = 'none';
+  clearErrors();
+  document.querySelectorAll('.radio-opt').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.radio-opt:first-child').forEach(e => e.classList.add('active'));
+  vacantRooms = [];
+  document.getElementById('rent').value = '1500';
+  document.getElementById('deposit').value = '3000';
+  document.getElementById('electric_rate').value = '5';
+  document.getElementById('water_rate').value = '18';
+  updateSteps();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── PRESELECT ROOM ──────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const pre = sessionStorage.getItem('preselect_room');
+  if (pre) {
+    sessionStorage.removeItem('preselect_room');
+    syncRooms().then(() => {
+      const sel = document.getElementById('room_no');
+      sel.value = pre;
+      onRoomSelect();
+    });
+  }
+  updateSteps();
+});
+</script>
+<!-- ค้นหาฟังก์ชันที่เกี่ยวข้องกับการดึงค่าห้องพัก (ปกติจะอยู่ท้ายไฟล์) แล้วแก้ไขดังนี้ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // เรียกฟังก์ชันตรวจสอบห้องที่ถูกเลือกมาจากหน้าแรก
+  checkPreselectedRoom();
+});
+
+function checkPreselectedRoom() {
+  const preselectedRoom = sessionStorage.getItem('preselect_room');
+  if (preselectedRoom) {
+    const roomInput = document.getElementById('room_no'); // ID input ฟิลด์เลขห้องของคุณ
+    if (roomInput) {
+      roomInput.value = preselectedRoom;
+      // เรียกฟังก์ชันโหลดข้อมูลรายละเอียดห้องพักนั้นๆ มาเติมในฟอร์มอัตโนมัติ
+      fetchRoomDetails(preselectedRoom);
+    }
+  }
+}
+
+async function fetchRoomDetails(roomNo) {
+  try {
+    // สามารถเลือกดึงข้อมูลจาก Array รวมที่โหลดไว้ หรือ Fetch API เพิ่มเติม
+    // ตัวอย่างการแมปข้อมูลใส่ฟิลด์ราคาและเงินประกันอัตโนมัติเพื่ออำนวยความสะดวกให้ผู้ใช้
+    console.log(`Syncing details for room: ${roomNo}`);
+    
+    // หากมีฟิลด์แสดงราคา/เงินประกันในหน้าลงทะเบียน ให้เพิ่มโค้ดกรอกค่าตรงนี้ เช่น:
+    // document.getElementById('rent_price').value = room.rent;
+    
+  } catch (error) {
+    console.error("Error syncing room details:", error);
+  }
+}
+</script>
+</body>
+</html>

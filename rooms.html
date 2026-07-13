@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KP Dormitory — จัดการห้องพัก</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--orange:#F97316;--orange-dark:#EA580C;--navy:#0F1E35;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sarabun',sans-serif;background:#F9FAFB;color:#111827;}
+  .kp-main-content{margin-left:240px;min-height:100vh;transition:margin-left .3s;}
+  .topbar{background:#fff;border-bottom:1px solid #F3F4F6;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .topbar-title{font-size:17px;font-weight:600;color:#111827;font-family:'Prompt',sans-serif;}
+  .topbar-breadcrumb{font-size:12px;color:#9CA3AF;}
+  .page-content{padding:28px;}
+
+  /* Stats */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .stat-chip{background:#fff;border:1px solid #F3F4F6;border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;}
+  .stat-chip-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .stat-chip-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .stat-chip-icon.all{background:#FFF7ED;color:#F97316;}
+  .stat-chip-icon.occupied{background:#F0FDF4;color:#16A34A;}
+  .stat-chip-icon.vacant{background:#EFF6FF;color:#2563EB;}
+  .stat-chip-icon.maint{background:#FEF9C3;color:#CA8A04;}
+  .stat-chip-val{font-size:22px;font-weight:700;color:#111827;font-family:'Prompt',sans-serif;line-height:1;}
+  .stat-chip-label{font-size:12px;color:#9CA3AF;margin-top:2px;}
+
+  /* Toolbar */
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .search-wrap{position:relative;flex:1;min-width:180px;}
+  .search-wrap input{width:100%;height:38px;padding:0 12px 0 38px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;outline:none;background:#fff;transition:border-color .15s;}
+  .search-wrap input:focus{border-color:var(--orange);}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:#9CA3AF;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .filter-select{height:38px;padding:0 32px 0 12px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;outline:none;background:#fff;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;cursor:pointer;}
+  .btn-add{height:38px;padding:0 18px;background:linear-gradient(135deg,var(--orange),var(--orange-dark));color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:opacity .15s;}
+  .btn-add:hover{opacity:.9;}
+  .btn-add svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* View toggle */
+  .view-toggle{display:flex;gap:4px;background:#F3F4F6;border-radius:8px;padding:3px;}
+  .view-btn{width:32px;height:32px;border:none;background:transparent;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .view-btn.active{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+  .view-btn svg{width:15px;height:15px;stroke:#6B7280;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .view-btn.active svg{stroke:var(--orange);}
+
+  /* Grid view */
+  #gridView{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+  .room-card{background:#fff;border:1px solid #F3F4F6;border-radius:16px;padding:18px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+  .room-card:hover{border-color:#FED7AA;box-shadow:0 4px 20px rgba(249,115,22,0.10);}
+  .room-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+  .room-number{font-size:24px;font-weight:700;color:#111827;font-family:'Prompt',sans-serif;line-height:1;}
+  .room-floor{font-size:11px;color:#9CA3AF;margin-top:2px;}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+  .status-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .s-occupied{background:#F0FDF4;color:#16A34A;}
+  .s-vacant{background:#EFF6FF;color:#2563EB;}
+  .s-maintenance{background:#FEF9C3;color:#CA8A04;}
+  .room-tenant{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #F9FAFB;border-bottom:1px solid #F9FAFB;margin-bottom:10px;}
+  .tenant-avatar{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#F97316,#EA580C);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;font-family:'Prompt',sans-serif;}
+  .tenant-name{font-size:13px;font-weight:500;color:#374151;}
+  .tenant-since{font-size:11px;color:#9CA3AF;}
+  .room-billing{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .billing-item{background:#F9FAFB;border-radius:8px;padding:6px 10px;}
+  .billing-label{font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.04em;}
+  .billing-val{font-size:13px;font-weight:600;color:#374151;}
+  .room-actions{display:flex;gap:6px;margin-top:12px;}
+  .room-btn{flex:1;height:32px;border-radius:8px;font-size:12px;font-weight:500;font-family:'Sarabun',sans-serif;cursor:pointer;border:1.5px solid #E5E7EB;background:#fff;color:#374151;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
+  .room-btn:hover{border-color:#F97316;color:#F97316;background:#FFF7ED;}
+  .room-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .room-btn.danger:hover{border-color:#EF4444;color:#EF4444;background:#FEF2F2;}
+
+  /* Table view */
+  #tableView{display:none;}
+  .table-wrap{background:#fff;border:1px solid #F3F4F6;border-radius:16px;overflow:hidden;}
+  .kp-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .kp-table th{background:#F9FAFB;padding:11px 16px;text-align:left;font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #F3F4F6;white-space:nowrap;}
+  .kp-table td{padding:13px 16px;border-bottom:1px solid #F9FAFB;color:#374151;vertical-align:middle;}
+  .kp-table tr:last-child td{border-bottom:none;}
+  .kp-table tr:hover td{background:#FAFAFA;}
+  .action-btns{display:flex;gap:6px;}
+  .icon-btn{width:30px;height:30px;border-radius:7px;border:1.5px solid #E5E7EB;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .icon-btn:hover{border-color:#F97316;background:#FFF7ED;}
+  .icon-btn.danger:hover{border-color:#EF4444;background:#FEF2F2;}
+  .icon-btn svg{width:13px;height:13px;stroke:#6B7280;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .icon-btn:hover svg{stroke:#F97316;}
+  .icon-btn.danger:hover svg{stroke:#EF4444;}
+
+  /* Loading/Empty */
+  .loading-box{text-align:center;padding:60px 20px;color:#9CA3AF;}
+  .loading-box svg{width:40px;height:40px;stroke:#D1D5DB;fill:none;stroke-width:1.5;margin:0 auto 12px;display:block;}
+  .spin{animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+  .modal-header{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between;}
+  .modal-title{font-size:16px;font-weight:600;color:#111827;font-family:'Prompt',sans-serif;}
+  .modal-close{width:32px;height:32px;border:none;background:#F3F4F6;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .modal-close svg{width:16px;height:16px;stroke:#6B7280;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .modal-body{padding:20px 24px 24px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid.full{grid-template-columns:1fr;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group.span2{grid-column:span 2;}
+  .form-label{font-size:12px;font-weight:500;color:#374151;}
+  .req{color:#EF4444;margin-left:2px;}
+  .form-input{height:40px;padding:0 12px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;outline:none;transition:border-color .15s;}
+  .form-input:focus{border-color:var(--orange);}
+  .form-select{height:40px;padding:0 32px 0 12px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;outline:none;appearance:none;-webkit-appearance:none;background:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;}
+  .form-select:focus{border-color:var(--orange);}
+  .modal-footer{display:flex;gap:10px;margin-top:20px;}
+  .btn-cancel{flex:1;height:40px;border:1.5px solid #E5E7EB;border-radius:10px;background:#fff;font-size:13px;font-weight:500;font-family:'Sarabun',sans-serif;cursor:pointer;color:#374151;}
+  .btn-save{flex:2;height:40px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--orange-dark));color:#fff;font-size:13px;font-weight:600;font-family:'Prompt',sans-serif;cursor:pointer;transition:opacity .15s;}
+  .btn-save:hover{opacity:.9;}
+  .btn-save:disabled{opacity:.6;cursor:not-allowed;}
+
+  /* Toast */
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111827;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;transition:transform .25s;z-index:999;white-space:nowrap;border-left:4px solid var(--orange);}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+  #toast.success{border-color:#16A34A;}
+  #toast.error{border-color:#EF4444;}
+
+  /* History modal */
+  .history-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #F9FAFB;}
+  .history-item:last-child{border-bottom:none;}
+  .history-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:5px;}
+  .history-name{font-size:13px;font-weight:500;color:#374151;}
+  .history-date{font-size:11px;color:#9CA3AF;margin-top:2px;}
+
+  @media(max-width:768px){
+    .kp-main-content{margin-left:0;}
+    .page-content{padding:70px 16px 24px;}
+    .stats-row{grid-template-columns:1fr 1fr;}
+    #gridView{grid-template-columns:1fr 1fr;}
+    .topbar{padding:0 16px 0 60px;}
+  }
+  @media(max-width:480px){
+    #gridView{grid-template-columns:1fr;}
+    .stats-row{grid-template-columns:1fr 1fr;}
+    .form-grid{grid-template-columns:1fr;}
+    .form-group.span2{grid-column:span 1;}
+  }
+
+/* ── RESPONSIVE ROOMS ─── */
+@media(max-width:768px){
+  .kp-main-content{margin-left:0!important;}
+  .page-content{padding:70px 12px 24px!important;}
+  .topbar{padding:0 12px 0 56px!important;}
+  .stats-row{grid-template-columns:1fr 1fr!important;gap:10px;}
+  .stat-chip{padding:12px 14px;}
+  .stat-chip-val{font-size:20px;}
+  .toolbar{gap:8px;}
+  .search-wrap{min-width:140px;}
+  .filter-select{min-width:0;font-size:12px;}
+  #gridView{grid-template-columns:1fr!important;}
+  .room-card{padding:14px;}
+  /* hide table on mobile, use grid */
+  #tableView{overflow-x:auto;}
+  .kp-table{min-width:600px;}
+  /* modal */
+  .modal{border-radius:16px 16px 0 0;}
+  .modal-overlay{align-items:flex-end;padding:0;}
+  .modal-body{max-height:70vh;overflow-y:auto;}
+  .form-grid{grid-template-columns:1fr!important;}
+  .form-group.span2{grid-column:span 1!important;}
+  .btn-add span:not(.btn-add svg~span){display:none;}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .room-actions{flex-wrap:wrap;}
+  .room-btn{font-size:11px;}
+  .toolbar{flex-wrap:wrap;}
+  .view-toggle{display:none;}
+}
+@media(min-width:769px) and (max-width:1024px){
+  .kp-main-content{margin-left:240px;}
+  #gridView{grid-template-columns:repeat(2,1fr)!important;}
+}
+</style>
+</head>
+<body>
+<div id="sidebar-container"></div>
+
+<div class="kp-main-content">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">จัดการห้องพัก</div>
+      <div class="topbar-breadcrumb">KP Dormitory · Rooms</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn-add" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        เพิ่มห้องใหม่
+      </button>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-chip"><div class="stat-chip-icon all"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="stat-chip-val" id="statAll">—</div><div class="stat-chip-label">ห้องทั้งหมด</div></div></div>
+      <div class="stat-chip"><div class="stat-chip-icon occupied"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div class="stat-chip-val" id="statOccupied">—</div><div class="stat-chip-label">มีผู้เช่า</div></div></div>
+      <div class="stat-chip"><div class="stat-chip-icon vacant"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div><div><div class="stat-chip-val" id="statVacant">—</div><div class="stat-chip-label">ว่าง</div></div></div>
+      <div class="stat-chip"><div class="stat-chip-icon maint"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div><div><div class="stat-chip-val" id="statMaint">—</div><div class="stat-chip-label">ซ่อมบำรุง</div></div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="ค้นหาห้อง, ผู้เช่า..." oninput="renderRooms()">
+      </div>
+      <select class="filter-select" id="filterStatus" onchange="renderRooms()">
+        <option value="">ทุกสถานะ</option>
+        <option value="occupied">มีผู้เช่า</option>
+        <option value="vacant">ว่าง</option>
+        <option value="maintenance">ซ่อมบำรุง</option>
+      </select>
+      <select class="filter-select" id="filterFloor" onchange="renderRooms()">
+        <option value="">ทุกชั้น</option>
+        <option value="1">ชั้น 1</option>
+        <option value="2">ชั้น 2</option>
+        <option value="3">ชั้น 3</option>
+      </select>
+      <div class="view-toggle">
+        <button class="view-btn active" id="btnGrid" onclick="setView('grid')" aria-label="Grid view">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="view-btn" id="btnTable" onclick="setView('table')" aria-label="Table view">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+      <button class="btn-add" style="background:transparent;border:1.5px solid #E5E7EB;color:#374151;box-shadow:none;" onclick="loadRooms()">
+        <svg viewBox="0 0 24 24" style="stroke:#6B7280"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        รีเฟรช
+      </button>
+    </div>
+
+    <!-- Grid View -->
+    <div id="gridView">
+      <div class="loading-box">
+        <svg class="spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="10"/></svg>
+        <div>กำลังโหลดข้อมูลห้องพัก...</div>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div id="tableView">
+      <div class="table-wrap">
+        <table class="kp-table">
+          <thead>
+            <tr>
+              <th>ห้อง</th>
+              <th>ชั้น</th>
+              <th>สถานะ</th>
+              <th>ผู้เช่า</th>
+              <th>Check-in</th>
+              <th>ค่าเช่า</th>
+              <th>ค่าไฟ/หน่วย</th>
+              <th>ค่าน้ำ/หน่วย</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="9" style="text-align:center;padding:40px;color:#9CA3AF">กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal: Add/Edit Room -->
+<div class="modal-overlay" id="roomModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">เพิ่มห้องใหม่</div>
+      <button class="modal-close" onclick="closeModal('roomModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">เลขห้อง <span class="req">*</span></label>
+          <input class="form-input" id="f_room_no" placeholder="เช่น 101">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ชั้น <span class="req">*</span></label>
+          <select class="form-select" id="f_floor">
+            <option value="1">ชั้น 1</option>
+            <option value="2">ชั้น 2</option>
+            <option value="3">ชั้น 3</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานะ <span class="req">*</span></label>
+          <select class="form-select" id="f_status" onchange="toggleTenantFields()">
+            <option value="vacant">ว่าง</option>
+            <option value="occupied">มีผู้เช่า</option>
+            <option value="maintenance">ซ่อมบำรุง</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ค่าเช่า/เดือน (บาท)</label>
+          <input class="form-input" id="f_rent" type="number" placeholder="1500" value="1500">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ค่าไฟ (บาท/หน่วย)</label>
+          <input class="form-input" id="f_electric" type="number" placeholder="5" value="5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ค่าน้ำ (บาท/หน่วย)</label>
+          <input class="form-input" id="f_water" type="number" placeholder="18" value="18">
+        </div>
+        <div class="form-group span2" id="tenantFields">
+          <label class="form-label">ชื่อผู้เช่าปัจจุบัน</label>
+          <input class="form-input" id="f_tenant_name" placeholder="ชื่อ-นามสกุล">
+        </div>
+        <div class="form-group" id="checkinField">
+          <label class="form-label">วันที่ Check-in</label>
+          <input class="form-input" id="f_checkin" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">หมายเหตุ</label>
+          <input class="form-input" id="f_remark" placeholder="หมายเหตุเพิ่มเติม">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('roomModal')">ยกเลิก</button>
+        <button class="btn-save" id="btnSave" onclick="saveRoom()">บันทึก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: History -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="historyTitle">ประวัติห้อง</div>
+      <button class="modal-close" onclick="closeModal('historyModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="historyBody">
+      <div style="text-align:center;padding:30px;color:#9CA3AF">กำลังโหลด...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="menu.js"></script>
+<script>
+KPMenu.render('sidebar-container');
+
+// ===== CONFIG =====
+const WEBHOOK_GET   = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-get';
+const WEBHOOK_SAVE  = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-save';
+const WEBHOOK_DEL   = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-delete';
+
+let rooms = [];
+let editingId = null;
+let currentView = 'grid';
+
+// ===== LOAD =====
+async function loadRooms() {
+  showLoading();
+  try {
+    const res = await fetch(WEBHOOK_GET, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ action: 'get_all' })
+});
+    const raw = await res.json();
+    const arr = Array.isArray(raw) ? raw : (raw.data || []);
+    rooms = arr.map(r => ({
+  ...r,
+  id:       r.id       || r.res_id   || String(r.row_number),
+  room_no:  r.room_no  || '',
+  floor:    String(r.floor || '').replace('ชั้น ','').replace('ชั้น','').trim(),
+  status:   r.status && r.status !== 'empty' ? r.status : 'vacant',
+  rent:     Number(r.rent) || 1500,
+  electric_rate: Number(r.electric_rate) || 5,
+  water_rate:    Number(r.water_rate)    || 18,
+  tenant_name:   r.tenant_name || '',
+  checkin_date:  r.checkin_date || '',
+  remark:        r.res_remark || r.remark || '',
+}));
+    // ถ้ายังไม่มี Webhook → ใช้ข้อมูล Demo
+    if (!rooms.length) rooms = getDemoRooms();
+  } catch(e) {
+    console.log('[Rooms] load error, using demo data:', e);
+    rooms = getDemoRooms();
+  }
+  updateStats();
+  renderRooms();
+}
+
+function getDemoRooms() {
+  return [
+    {id:'1',room_no:'101',floor:'1',status:'occupied',tenant_name:'สมชาย ใจดี',checkin_date:'2025-01-01',rent:1500,electric_rate:5,water_rate:18,remark:''},
+    {id:'2',room_no:'102',floor:'1',status:'vacant',tenant_name:'',checkin_date:'',rent:1500,electric_rate:5,water_rate:18,remark:''},
+    {id:'3',room_no:'103',floor:'1',status:'maintenance',tenant_name:'',checkin_date:'',rent:1500,electric_rate:5,water_rate:18,remark:'ซ่อมแอร์'},
+    {id:'4',room_no:'201',floor:'2',status:'occupied',tenant_name:'มาลี สวยงาม',checkin_date:'2025-02-15',rent:1500,electric_rate:5,water_rate:18,remark:''},
+    {id:'5',room_no:'202',floor:'2',status:'vacant',tenant_name:'',checkin_date:'',rent:1500,electric_rate:5,water_rate:18,remark:''},
+    {id:'6',room_no:'203',floor:'2',status:'occupied',tenant_name:'วิชัย รักดี',checkin_date:'2025-03-01',rent:1500,electric_rate:5,water_rate:18,remark:''},
+    {id:'7',room_no:'301',floor:'3',status:'vacant',tenant_name:'',checkin_date:'',rent:1500,electric_rate:5,water_rate:18,remark:''},
+    {id:'8',room_no:'302',floor:'3',status:'occupied',tenant_name:'นภา ฟ้าใส',checkin_date:'2025-04-10',rent:1500,electric_rate:5,water_rate:18,remark:''},
+  ];
+}
+
+// ===== STATS =====
+function updateStats() {
+  const all = rooms.length;
+  const occ = rooms.filter(r=>r.status==='occupied').length;
+  const vac = rooms.filter(r=>r.status==='vacant').length;
+  const mai = rooms.filter(r=>r.status==='maintenance').length;
+  document.getElementById('statAll').textContent = all;
+  document.getElementById('statOccupied').textContent = occ;
+  document.getElementById('statVacant').textContent = vac;
+  document.getElementById('statMaint').textContent = mai;
+}
+
+// ===== FILTER =====
+function getFiltered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const fl = document.getElementById('filterFloor').value;
+  return rooms.filter(r => {
+    const matchQ = !q || r.room_no?.toLowerCase().includes(q) || r.tenant_name?.toLowerCase().includes(q);
+    const matchS = !st || r.status === st;
+    const matchF = !fl || String(r.floor) === fl;
+    return matchQ && matchS && matchF;
+  });
+}
+
+// ===== RENDER =====
+function showLoading() {
+  document.getElementById('gridView').innerHTML = `<div class="loading-box"><svg class="spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#E5E7EB" stroke-width="2" fill="none"/><path d="M12 2a10 10 0 0110 10" stroke="#F97316" stroke-width="2" fill="none" stroke-linecap="round"/></svg><div>กำลังโหลดข้อมูลห้องพัก...</div></div>`;
+  document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#9CA3AF">กำลังโหลด...</td></tr>`;
+}
+
+function statusLabel(s) {
+  if(s==='occupied') return '<span class="status-pill s-occupied">มีผู้เช่า</span>';
+  if(s==='maintenance') return '<span class="status-pill s-maintenance">ซ่อมบำรุง</span>';
+  return '<span class="status-pill s-vacant">ว่าง</span>';
+}
+
+function avatarLetters(name) {
+  if(!name) return '?';
+  const p=name.trim().split(' ');
+  return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():name.substring(0,2).toUpperCase();
+}
+
+function renderRooms() {
+  const data = getFiltered();
+  if(currentView==='grid') renderGrid(data);
+  else renderTable(data);
+}
+
+function renderGrid(data) {
+  if(!data.length){
+    document.getElementById('gridView').innerHTML=`<div class="loading-box"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div>ไม่พบห้องที่ค้นหา</div></div>`;
+    return;
+  }
+  document.getElementById('gridView').innerHTML = data.map(r => `
+    <div class="room-card" data-id="${r.id}">
+      <div class="room-card-header">
+        <div>
+          <div class="room-number">ห้อง ${r.room_no}</div>
+          <div class="room-floor">ชั้น ${r.floor}</div>
+        </div>
+        ${statusLabel(r.status)}
+      </div>
+      ${r.status==='occupied' && r.tenant_name ? `
+      <div class="room-tenant">
+        <div class="tenant-avatar">${avatarLetters(r.tenant_name)}</div>
+        <div>
+          <div class="tenant-name">${r.tenant_name}</div>
+          <div class="tenant-since">Check-in: ${r.checkin_date||'—'}</div>
+        </div>
+      </div>` : `<div style="height:10px"></div>`}
+      <div class="room-billing">
+        <div class="billing-item"><div class="billing-label">ค่าเช่า/เดือน</div><div class="billing-val">${Number(r.rent||0).toLocaleString()} บ.</div></div>
+        <div class="billing-item"><div class="billing-label">ค่าไฟ/หน่วย</div><div class="billing-val">${r.electric_rate||5} บ.</div></div>
+        <div class="billing-item"><div class="billing-label">ค่าน้ำ/หน่วย</div><div class="billing-val">${r.water_rate||18} บ.</div></div>
+        ${r.remark?`<div class="billing-item"><div class="billing-label">หมายเหตุ</div><div class="billing-val" style="font-size:11px;font-weight:400;color:#9CA3AF">${r.remark}</div></div>`:''}
+      </div>
+      <div class="room-actions">
+        <button class="room-btn" onclick="openEditModal('${r.id}')">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          แก้ไข
+        </button>
+        <button class="room-btn" onclick="openHistory('${r.id}','${r.room_no}')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          ประวัติ
+        </button>
+        <button class="room-btn danger" onclick="deleteRoom('${r.id}','${r.room_no}')">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          ลบ
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTable(data) {
+  if(!data.length){
+    document.getElementById('tableBody').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:#9CA3AF">ไม่พบห้องที่ค้นหา</td></tr>`;
+    return;
+  }
+  document.getElementById('tableBody').innerHTML = data.map(r=>`
+    <tr>
+      <td><span style="font-weight:700;color:#F97316">${r.room_no}</span></td>
+      <td>ชั้น ${r.floor}</td>
+      <td>${statusLabel(r.status)}</td>
+      <td>${r.tenant_name||'<span style="color:#D1D5DB">—</span>'}</td>
+      <td>${r.checkin_date||'<span style="color:#D1D5DB">—</span>'}</td>
+      <td>${Number(r.rent||0).toLocaleString()} บ.</td>
+      <td>${r.electric_rate||5} บ.</td>
+      <td>${r.water_rate||18} บ.</td>
+      <td>
+        <div class="action-btns">
+          <button class="icon-btn" onclick="openEditModal('${r.id}')" title="แก้ไข"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn" onclick="openHistory('${r.id}','${r.room_no}')" title="ประวัติ"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+          <button class="icon-btn danger" onclick="deleteRoom('${r.id}','${r.room_no}')" title="ลบ"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ===== VIEW TOGGLE =====
+function setView(v) {
+  currentView = v;
+  document.getElementById('gridView').style.display = v==='grid'?'grid':'none';
+  document.getElementById('tableView').style.display = v==='table'?'block':'none';
+  document.getElementById('btnGrid').classList.toggle('active', v==='grid');
+  document.getElementById('btnTable').classList.toggle('active', v==='table');
+  renderRooms();
+}
+
+// ===== MODAL =====
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'เพิ่มห้องใหม่';
+  document.getElementById('f_room_no').value='';
+  document.getElementById('f_floor').value='1';
+  document.getElementById('f_status').value='vacant';
+  document.getElementById('f_rent').value='1500';
+  document.getElementById('f_electric').value='5';
+  document.getElementById('f_water').value='18';
+  document.getElementById('f_tenant_name').value='';
+  document.getElementById('f_checkin').value='';
+  document.getElementById('f_remark').value='';
+  document.getElementById('f_room_no').disabled=false;
+  toggleTenantFields();
+  document.getElementById('roomModal').classList.add('show');
+}
+
+function openEditModal(id) {
+  const r = rooms.find(x=>x.id===id);
+  if(!r) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'แก้ไขห้อง '+r.room_no;
+  document.getElementById('f_room_no').value=r.room_no;
+  document.getElementById('f_floor').value=r.floor||'1';
+  document.getElementById('f_status').value=r.status||'vacant';
+  document.getElementById('f_rent').value=r.rent||1500;
+  document.getElementById('f_electric').value=r.electric_rate||5;
+  document.getElementById('f_water').value=r.water_rate||18;
+  document.getElementById('f_tenant_name').value=r.tenant_name||'';
+  document.getElementById('f_checkin').value=r.checkin_date||'';
+  document.getElementById('f_remark').value=r.remark||'';
+  document.getElementById('f_room_no').disabled=true;
+  toggleTenantFields();
+  document.getElementById('roomModal').classList.add('show');
+}
+
+function toggleTenantFields() {
+  const st = document.getElementById('f_status').value;
+  const show = st==='occupied';
+  document.getElementById('tenantFields').style.display = show?'flex':'none';
+  document.getElementById('checkinField').style.display = show?'flex':'none';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// ===== SAVE =====
+async function saveRoom() {
+  const room_no = document.getElementById('f_room_no').value.trim();
+  if(!room_no){ showToast('กรุณากรอกเลขห้อง','error'); return; }
+  const payload = {
+    id: editingId || ('r'+Date.now()),
+    room_no,
+    floor: document.getElementById('f_floor').value,
+    status: document.getElementById('f_status').value,
+    rent: document.getElementById('f_rent').value,
+    electric_rate: document.getElementById('f_electric').value,
+    water_rate: document.getElementById('f_water').value,
+    tenant_name: document.getElementById('f_tenant_name').value,
+    checkin_date: document.getElementById('f_checkin').value,
+    remark: document.getElementById('f_remark').value,
+    action: editingId ? 'update' : 'add',
+    updated_at: new Date().toISOString(),
+  };
+  const btn = document.getElementById('btnSave');
+  btn.disabled=true; btn.textContent='กำลังบันทึก...';
+  try {
+    await fetch(WEBHOOK_SAVE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  } catch(e){ console.log('[Rooms] save error (demo mode)'); }
+  // อัปเดต local
+  if(editingId) {
+    const idx = rooms.findIndex(r=>r.id===editingId);
+    if(idx>=0) rooms[idx]={...rooms[idx],...payload};
+  } else {
+    rooms.push(payload);
+  }
+  updateStats(); renderRooms();
+  closeModal('roomModal');
+  showToast(editingId?'แก้ไขข้อมูลห้องเรียบร้อย':'เพิ่มห้องใหม่เรียบร้อย','success');
+  btn.disabled=false; btn.textContent='บันทึก';
+}
+
+// ===== DELETE =====
+async function deleteRoom(id, no) {
+  if(!confirm(`ต้องการลบห้อง ${no} หรือไม่?\nการดำเนินการนี้ไม่สามารถย้อนกลับได้`)) return;
+  try {
+    await fetch(WEBHOOK_DEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,room_no:no,action:'delete'})});
+  } catch(e){ console.log('[Rooms] delete error (demo mode)'); }
+  rooms = rooms.filter(r=>r.id!==id);
+  updateStats(); renderRooms();
+  showToast('ลบห้อง '+no+' เรียบร้อย','success');
+}
+
+// ===== HISTORY =====
+function openHistory(id, no) {
+  document.getElementById('historyTitle').textContent='ประวัติห้อง '+no;
+  document.getElementById('historyBody').innerHTML=`
+    <div style="color:#9CA3AF;font-size:12px;margin-bottom:14px">ประวัติผู้เช่าห้อง ${no} (ข้อมูล Demo)</div>
+    <div class="history-item"><div class="history-dot"></div><div><div class="history-name">สมชาย ใจดี</div><div class="history-date">Check-in: 1 ม.ค. 2568 · Check-out: ปัจจุบัน</div></div></div>
+    <div class="history-item"><div class="history-dot" style="background:#9CA3AF"></div><div><div class="history-name">วิมล แสนดี</div><div class="history-date">Check-in: 1 มิ.ย. 2567 · Check-out: 31 ธ.ค. 2567</div></div></div>
+    <div class="history-item"><div class="history-dot" style="background:#9CA3AF"></div><div><div class="history-name">ประเสริฐ ดีมาก</div><div class="history-date">Check-in: 1 ม.ค. 2567 · Check-out: 31 พ.ค. 2567</div></div></div>
+    <div style="margin-top:16px;padding:12px;background:#FFF7ED;border-radius:10px;font-size:12px;color:#92400E">
+      เชื่อมต่อ N8n Webhook เพื่อดูประวัติจาก Google Sheets จริงครับ
+    </div>`;
+  document.getElementById('historyModal').classList.add('show');
+}
+
+// ===== TOAST =====
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent=msg;
+  t.className='show '+(type==='success'?'success':type==='error'?'error':'');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('show'); });
+});
+
+// ===== INIT =====
+setView('grid');
+loadRooms();
+</script>
+</body>
+</html>
