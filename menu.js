@@ -1,8 +1,8 @@
-console.log('[KP Menu] menu.js loaded v4');
+console.log('[KP Menu] menu.js loaded v6 (n8n ready)');
 
 const KPMenu = (() => {
 
-  const LOGIN_PAGE = 'kpdormlogin.html';
+  const LOGIN_PAGE = (typeof KP_CONFIG !== 'undefined' && KP_CONFIG.LOGIN_PAGE) ? KP_CONFIG.LOGIN_PAGE : 'index.html';
 
   const MENU_ITEMS = [
     {
@@ -24,6 +24,14 @@ const KPMenu = (() => {
       href: 'rooms.html'
     },
     {
+      id: 'billing',
+      label: 'คำนวณน้ำ-ไฟ',
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>`,
+      href: 'Elecwateruse.html'
+    },
+    {
       id: 'users',
       label: 'จัดการ User',
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -37,16 +45,12 @@ const KPMenu = (() => {
 
   function getSession() {
     try {
-      // รองรับทั้ง localStorage และ sessionStorage
       const raw = localStorage.getItem('kp_user')
                || sessionStorage.getItem('kp_user');
-      console.log('[KP Menu] session raw:', raw);
       if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      console.log('[KP Menu] session parsed:', parsed);
-      return parsed;
-    } catch(e) {
-      console.log('[KP Menu] parse error:', e);
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error('[KP Menu] parse error:', e);
       return null;
     }
   }
@@ -65,16 +69,23 @@ const KPMenu = (() => {
   }
 
   function getActiveId() {
-    const page = window.location.pathname.split('/').pop() || 'main.html';
+    const page = (window.location.pathname.split('/').pop() || 'main.html').toLowerCase();
     if (page === 'main.html' || page === '') return 'dashboard';
     if (page.includes('room')) return 'rooms';
+    if (page.includes('elecwater')) return 'billing';
     if (page.includes('user')) return 'users';
     return '';
   }
 
   function getTypeLabel(type) {
-    const map = { '1': 'ผู้ดูแลระบบ', '2': 'Super Admin', '3': 'ผู้จัดการ', '4': 'พนักงาน' };
-    return map[String(type)] || `Type ${type}`;
+    const map = {
+      '1': 'Super Admin',
+      '2': 'Admin',
+      '3': 'ผู้จัดการ',
+      '4': 'พนักงาน',
+      '0': 'ผู้เช่า'
+    };
+    return map[String(type)] || 'พนักงาน';
   }
 
   function getAvatarLetters(name) {
@@ -86,10 +97,9 @@ const KPMenu = (() => {
 
   function render(containerId = 'sidebar-container') {
     const user = getSession();
-    console.log('[KP Menu] render user:', user);
 
     if (!user) {
-      console.log('[KP Menu] no session → redirect to', LOGIN_PAGE);
+      console.warn('[KP Menu] no session → redirect to', LOGIN_PAGE);
       window.location.href = LOGIN_PAGE;
       return;
     }
@@ -219,6 +229,10 @@ const KPMenu = (() => {
           #kp-hamburger { display: flex; }
           .kp-main-content { margin-left: 0 !important; }
         }
+        @media print {
+          #kp-sidebar, #kp-hamburger, #kp-overlay { display: none !important; }
+          .kp-main-content { margin-left: 0 !important; }
+        }
       </style>
 
       <div id="kp-overlay"></div>
@@ -244,7 +258,7 @@ const KPMenu = (() => {
 
         <div class="kp-sb-footer">
           <div class="kp-user-card">
-            <div class="kp-avatar">${getAvatarLetters(user.res_name)}</div>
+            <div class="kp-avatar">${getAvatarLetters(user.res_name || user.res_users)}</div>
             <div class="kp-user-info">
               <div class="kp-user-name">${user.res_name || user.res_users}</div>
               <div class="kp-user-role">${getTypeLabel(user.res_type)}</div>
@@ -275,23 +289,25 @@ const KPMenu = (() => {
     const sidebar   = document.getElementById('kp-sidebar');
     const overlay   = document.getElementById('kp-overlay');
 
-    hamburger.addEventListener('click', () => {
+    function openSidebar() {
       sidebar.classList.add('mobile-open');
       overlay.classList.add('show');
-    });
-    overlay.addEventListener('click', () => {
+    }
+
+    function closeSidebar() {
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('show');
-    });
+    }
 
-    // Swipe-to-close on mobile
+    hamburger.addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
     let touchStartX = 0;
-    sidebar.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+    sidebar.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
     sidebar.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - touchStartX;
       if (dx < -60) closeSidebar();
-    }, {passive:true});
-
+    }, { passive: true });
   }
 
   return { render, getSession, clearSession, logout };

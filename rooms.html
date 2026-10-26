@@ -133,54 +133,30 @@
   .history-date{font-size:11px;color:#9CA3AF;margin-top:2px;}
 
   @media(max-width:768px){
-    .kp-main-content{margin-left:0;}
-    .page-content{padding:70px 16px 24px;}
-    .stats-row{grid-template-columns:1fr 1fr;}
-    #gridView{grid-template-columns:1fr 1fr;}
-    .topbar{padding:0 16px 0 60px;}
+    .kp-main-content{margin-left:0!important;}
+    .page-content{padding:70px 12px 24px!important;}
+    .topbar{padding:0 12px 0 56px!important;}
+    .stats-row{grid-template-columns:1fr 1fr!important;gap:10px;}
+    .stat-chip{padding:12px 14px;}
+    .stat-chip-val{font-size:20px;}
+    .toolbar{gap:8px;}
+    .search-wrap{min-width:140px;}
+    .filter-select{min-width:0;font-size:12px;}
+    #gridView{grid-template-columns:1fr!important;}
+    .room-card{padding:14px;}
+    #tableView{overflow-x:auto;}
+    .kp-table{min-width:600px;}
+    .modal{border-radius:16px 16px 0 0;}
+    .modal-overlay{align-items:flex-end;padding:0;}
+    .modal-body{max-height:70vh;overflow-y:auto;}
+    .form-grid{grid-template-columns:1fr!important;}
+    .form-group.span2{grid-column:span 1!important;}
+    .btn-add span:not(.btn-add svg~span){display:none;}
   }
   @media(max-width:480px){
-    #gridView{grid-template-columns:1fr;}
-    .stats-row{grid-template-columns:1fr 1fr;}
-    .form-grid{grid-template-columns:1fr;}
-    .form-group.span2{grid-column:span 1;}
+    .room-actions{flex-wrap:wrap;}
+    .room-btn{font-size:11px;}
   }
-
-/* ── RESPONSIVE ROOMS ─── */
-@media(max-width:768px){
-  .kp-main-content{margin-left:0!important;}
-  .page-content{padding:70px 12px 24px!important;}
-  .topbar{padding:0 12px 0 56px!important;}
-  .stats-row{grid-template-columns:1fr 1fr!important;gap:10px;}
-  .stat-chip{padding:12px 14px;}
-  .stat-chip-val{font-size:20px;}
-  .toolbar{gap:8px;}
-  .search-wrap{min-width:140px;}
-  .filter-select{min-width:0;font-size:12px;}
-  #gridView{grid-template-columns:1fr!important;}
-  .room-card{padding:14px;}
-  /* hide table on mobile, use grid */
-  #tableView{overflow-x:auto;}
-  .kp-table{min-width:600px;}
-  /* modal */
-  .modal{border-radius:16px 16px 0 0;}
-  .modal-overlay{align-items:flex-end;padding:0;}
-  .modal-body{max-height:70vh;overflow-y:auto;}
-  .form-grid{grid-template-columns:1fr!important;}
-  .form-group.span2{grid-column:span 1!important;}
-  .btn-add span:not(.btn-add svg~span){display:none;}
-}
-@media(max-width:480px){
-  .stats-row{grid-template-columns:1fr 1fr;}
-  .room-actions{flex-wrap:wrap;}
-  .room-btn{font-size:11px;}
-  .toolbar{flex-wrap:wrap;}
-  .view-toggle{display:none;}
-}
-@media(min-width:769px) and (max-width:1024px){
-  .kp-main-content{margin-left:240px;}
-  #gridView{grid-template-columns:repeat(2,1fr)!important;}
-}
 </style>
 </head>
 <body>
@@ -352,50 +328,45 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
+<script src="config.js"></script>
 <script src="menu.js"></script>
 <script>
 KPMenu.render('sidebar-container');
 
-// ===== CONFIG =====
-const WEBHOOK_GET   = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-get';
-const WEBHOOK_SAVE  = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-save';
-const WEBHOOK_DEL   = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-delete';
+const WEBHOOK_URL = (typeof KP_CONFIG !== 'undefined' && KP_CONFIG.API_URL) ? KP_CONFIG.API_URL : 'https://primary-production-064da.up.railway.app/webhook/kp-api';
 
 let rooms = [];
 let editingId = null;
 let currentView = 'grid';
 
-// ===== LOAD =====
 async function loadRooms() {
   showLoading();
   try {
-    const res = await fetch(WEBHOOK_GET, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ action: 'get_all' })
-});
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get_all' })
+    });
     const raw = await res.json();
     const arr = Array.isArray(raw) ? raw : (raw.data || []);
     rooms = arr.map(r => ({
-  ...r,
-  id:       r.id       || r.res_id   || String(r.row_number),
-  room_no:  r.room_no  || '',
-  floor:    String(r.floor || '').replace('ชั้น ','').replace('ชั้น','').trim(),
-  status:   r.status && r.status !== 'empty' ? r.status : 'vacant',
-  rent:     Number(r.rent) || 1500,
-  electric_rate: Number(r.electric_rate) || 5,
-  water_rate:    Number(r.water_rate)    || 18,
-  tenant_name:   r.tenant_name || '',
-  checkin_date:  r.checkin_date || '',
-  remark:        r.res_remark || r.remark || '',
-}));
-    // ถ้ายังไม่มี Webhook → ใช้ข้อมูล Demo
+      ...r,
+      id:            String(r.id || r.res_id || r.row_number || Math.random()),
+      room_no:       String(r.room_no || '').trim(),
+      floor:         String(r.floor || '1').replace('ชั้น ', '').replace('ชั้น', '').trim(),
+      status:        (r.status && r.status !== 'empty') ? String(r.status).toLowerCase() : 'vacant',
+      rent:          Number(r.rent) || 1500,
+      electric_rate: Number(r.electric_rate) || 5,
+      water_rate:    Number(r.water_rate) || 18,
+      tenant_name:   r.tenant_name || '',
+      checkin_date:  r.checkin_date || '',
+      remark:        r.res_remark || r.remark || '',
+    })).filter(r => r.room_no);
+
     if (!rooms.length) rooms = getDemoRooms();
-  } catch(e) {
-    console.log('[Rooms] load error, using demo data:', e);
+  } catch (e) {
     rooms = getDemoRooms();
   }
   updateStats();
@@ -415,19 +386,17 @@ function getDemoRooms() {
   ];
 }
 
-// ===== STATS =====
 function updateStats() {
   const all = rooms.length;
-  const occ = rooms.filter(r=>r.status==='occupied').length;
-  const vac = rooms.filter(r=>r.status==='vacant').length;
-  const mai = rooms.filter(r=>r.status==='maintenance').length;
+  const occ = rooms.filter(r => r.status === 'occupied').length;
+  const vac = rooms.filter(r => r.status === 'vacant').length;
+  const mai = rooms.filter(r => r.status === 'maintenance').length;
   document.getElementById('statAll').textContent = all;
   document.getElementById('statOccupied').textContent = occ;
   document.getElementById('statVacant').textContent = vac;
   document.getElementById('statMaint').textContent = mai;
 }
 
-// ===== FILTER =====
 function getFiltered() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   const st = document.getElementById('filterStatus').value;
@@ -440,33 +409,32 @@ function getFiltered() {
   });
 }
 
-// ===== RENDER =====
 function showLoading() {
   document.getElementById('gridView').innerHTML = `<div class="loading-box"><svg class="spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#E5E7EB" stroke-width="2" fill="none"/><path d="M12 2a10 10 0 0110 10" stroke="#F97316" stroke-width="2" fill="none" stroke-linecap="round"/></svg><div>กำลังโหลดข้อมูลห้องพัก...</div></div>`;
   document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#9CA3AF">กำลังโหลด...</td></tr>`;
 }
 
 function statusLabel(s) {
-  if(s==='occupied') return '<span class="status-pill s-occupied">มีผู้เช่า</span>';
-  if(s==='maintenance') return '<span class="status-pill s-maintenance">ซ่อมบำรุง</span>';
+  if (s === 'occupied') return '<span class="status-pill s-occupied">มีผู้เช่า</span>';
+  if (s === 'maintenance') return '<span class="status-pill s-maintenance">ซ่อมบำรุง</span>';
   return '<span class="status-pill s-vacant">ว่าง</span>';
 }
 
 function avatarLetters(name) {
-  if(!name) return '?';
-  const p=name.trim().split(' ');
-  return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():name.substring(0,2).toUpperCase();
+  if (!name) return '?';
+  const p = name.trim().split(' ');
+  return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
 }
 
 function renderRooms() {
   const data = getFiltered();
-  if(currentView==='grid') renderGrid(data);
+  if (currentView === 'grid') renderGrid(data);
   else renderTable(data);
 }
 
 function renderGrid(data) {
-  if(!data.length){
-    document.getElementById('gridView').innerHTML=`<div class="loading-box"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div>ไม่พบห้องที่ค้นหา</div></div>`;
+  if (!data.length) {
+    document.getElementById('gridView').innerHTML = `<div class="loading-box"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div>ไม่พบห้องที่ค้นหา</div></div>`;
     return;
   }
   document.getElementById('gridView').innerHTML = data.map(r => `
@@ -478,19 +446,19 @@ function renderGrid(data) {
         </div>
         ${statusLabel(r.status)}
       </div>
-      ${r.status==='occupied' && r.tenant_name ? `
+      ${r.status === 'occupied' && r.tenant_name ? `
       <div class="room-tenant">
         <div class="tenant-avatar">${avatarLetters(r.tenant_name)}</div>
         <div>
           <div class="tenant-name">${r.tenant_name}</div>
-          <div class="tenant-since">Check-in: ${r.checkin_date||'—'}</div>
+          <div class="tenant-since">Check-in: ${r.checkin_date || '—'}</div>
         </div>
       </div>` : `<div style="height:10px"></div>`}
       <div class="room-billing">
-        <div class="billing-item"><div class="billing-label">ค่าเช่า/เดือน</div><div class="billing-val">${Number(r.rent||0).toLocaleString()} บ.</div></div>
-        <div class="billing-item"><div class="billing-label">ค่าไฟ/หน่วย</div><div class="billing-val">${r.electric_rate||5} บ.</div></div>
-        <div class="billing-item"><div class="billing-label">ค่าน้ำ/หน่วย</div><div class="billing-val">${r.water_rate||18} บ.</div></div>
-        ${r.remark?`<div class="billing-item"><div class="billing-label">หมายเหตุ</div><div class="billing-val" style="font-size:11px;font-weight:400;color:#9CA3AF">${r.remark}</div></div>`:''}
+        <div class="billing-item"><div class="billing-label">ค่าเช่า/เดือน</div><div class="billing-val">${Number(r.rent || 0).toLocaleString()} บ.</div></div>
+        <div class="billing-item"><div class="billing-label">ค่าไฟ/หน่วย</div><div class="billing-val">${r.electric_rate || 5} บ.</div></div>
+        <div class="billing-item"><div class="billing-label">ค่าน้ำ/หน่วย</div><div class="billing-val">${r.water_rate || 18} บ.</div></div>
+        ${r.remark ? `<div class="billing-item" style="grid-column:span 2"><div class="billing-label">หมายเหตุ</div><div class="billing-val" style="font-size:11px;font-weight:400;color:#9CA3AF">${r.remark}</div></div>` : ''}
       </div>
       <div class="room-actions">
         <button class="room-btn" onclick="openEditModal('${r.id}')">
@@ -511,20 +479,20 @@ function renderGrid(data) {
 }
 
 function renderTable(data) {
-  if(!data.length){
-    document.getElementById('tableBody').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:#9CA3AF">ไม่พบห้องที่ค้นหา</td></tr>`;
+  if (!data.length) {
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#9CA3AF">ไม่พบห้องที่ค้นหา</td></tr>`;
     return;
   }
-  document.getElementById('tableBody').innerHTML = data.map(r=>`
+  document.getElementById('tableBody').innerHTML = data.map(r => `
     <tr>
       <td><span style="font-weight:700;color:#F97316">${r.room_no}</span></td>
       <td>ชั้น ${r.floor}</td>
       <td>${statusLabel(r.status)}</td>
-      <td>${r.tenant_name||'<span style="color:#D1D5DB">—</span>'}</td>
-      <td>${r.checkin_date||'<span style="color:#D1D5DB">—</span>'}</td>
-      <td>${Number(r.rent||0).toLocaleString()} บ.</td>
-      <td>${r.electric_rate||5} บ.</td>
-      <td>${r.water_rate||18} บ.</td>
+      <td>${r.tenant_name || '<span style="color:#D1D5DB">—</span>'}</td>
+      <td>${r.checkin_date || '<span style="color:#D1D5DB">—</span>'}</td>
+      <td>${Number(r.rent || 0).toLocaleString()} บ.</td>
+      <td>${r.electric_rate || 5} บ.</td>
+      <td>${r.water_rate || 18} บ.</td>
       <td>
         <div class="action-btns">
           <button class="icon-btn" onclick="openEditModal('${r.id}')" title="แก้ไข"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -536,139 +504,176 @@ function renderTable(data) {
   `).join('');
 }
 
-// ===== VIEW TOGGLE =====
 function setView(v) {
   currentView = v;
-  document.getElementById('gridView').style.display = v==='grid'?'grid':'none';
-  document.getElementById('tableView').style.display = v==='table'?'block':'none';
-  document.getElementById('btnGrid').classList.toggle('active', v==='grid');
-  document.getElementById('btnTable').classList.toggle('active', v==='table');
+  document.getElementById('gridView').style.display = v === 'grid' ? 'grid' : 'none';
+  document.getElementById('tableView').style.display = v === 'table' ? 'block' : 'none';
+  document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
+  document.getElementById('btnTable').classList.toggle('active', v === 'table');
   renderRooms();
 }
 
-// ===== MODAL =====
 function openAddModal() {
   editingId = null;
   document.getElementById('modalTitle').textContent = 'เพิ่มห้องใหม่';
-  document.getElementById('f_room_no').value='';
-  document.getElementById('f_floor').value='1';
-  document.getElementById('f_status').value='vacant';
-  document.getElementById('f_rent').value='1500';
-  document.getElementById('f_electric').value='5';
-  document.getElementById('f_water').value='18';
-  document.getElementById('f_tenant_name').value='';
-  document.getElementById('f_checkin').value='';
-  document.getElementById('f_remark').value='';
-  document.getElementById('f_room_no').disabled=false;
+  document.getElementById('f_room_no').value = '';
+  document.getElementById('f_floor').value = '1';
+  document.getElementById('f_status').value = 'vacant';
+  document.getElementById('f_rent').value = '1500';
+  document.getElementById('f_electric').value = '5';
+  document.getElementById('f_water').value = '18';
+  document.getElementById('f_tenant_name').value = '';
+  document.getElementById('f_checkin').value = '';
+  document.getElementById('f_remark').value = '';
+  document.getElementById('f_room_no').disabled = false;
   toggleTenantFields();
   document.getElementById('roomModal').classList.add('show');
 }
 
 function openEditModal(id) {
-  const r = rooms.find(x=>x.id===id);
-  if(!r) return;
+  const r = rooms.find(x => x.id === id);
+  if (!r) return;
   editingId = id;
-  document.getElementById('modalTitle').textContent = 'แก้ไขห้อง '+r.room_no;
-  document.getElementById('f_room_no').value=r.room_no;
-  document.getElementById('f_floor').value=r.floor||'1';
-  document.getElementById('f_status').value=r.status||'vacant';
-  document.getElementById('f_rent').value=r.rent||1500;
-  document.getElementById('f_electric').value=r.electric_rate||5;
-  document.getElementById('f_water').value=r.water_rate||18;
-  document.getElementById('f_tenant_name').value=r.tenant_name||'';
-  document.getElementById('f_checkin').value=r.checkin_date||'';
-  document.getElementById('f_remark').value=r.remark||'';
-  document.getElementById('f_room_no').disabled=true;
+  document.getElementById('modalTitle').textContent = 'แก้ไขห้อง ' + r.room_no;
+  document.getElementById('f_room_no').value = r.room_no;
+  document.getElementById('f_floor').value = r.floor || '1';
+  document.getElementById('f_status').value = r.status || 'vacant';
+  document.getElementById('f_rent').value = r.rent || 1500;
+  document.getElementById('f_electric').value = r.electric_rate || 5;
+  document.getElementById('f_water').value = r.water_rate || 18;
+  document.getElementById('f_tenant_name').value = r.tenant_name || '';
+  document.getElementById('f_checkin').value = r.checkin_date || '';
+  document.getElementById('f_remark').value = r.remark || '';
+  document.getElementById('f_room_no').disabled = true;
   toggleTenantFields();
   document.getElementById('roomModal').classList.add('show');
 }
 
 function toggleTenantFields() {
   const st = document.getElementById('f_status').value;
-  const show = st==='occupied';
-  document.getElementById('tenantFields').style.display = show?'flex':'none';
-  document.getElementById('checkinField').style.display = show?'flex':'none';
+  const show = st === 'occupied';
+  document.getElementById('tenantFields').style.display = show ? 'flex' : 'none';
+  document.getElementById('checkinField').style.display = show ? 'flex' : 'none';
+  if (!show) {
+    document.getElementById('f_tenant_name').value = '';
+    document.getElementById('f_checkin').value = '';
+  }
 }
 
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
 
-// ===== SAVE =====
 async function saveRoom() {
   const room_no = document.getElementById('f_room_no').value.trim();
-  if(!room_no){ showToast('กรุณากรอกเลขห้อง','error'); return; }
+  if (!room_no) { showToast('กรุณากรอกเลขห้อง', 'error'); return; }
+  const status = document.getElementById('f_status').value;
   const payload = {
-    id: editingId || ('r'+Date.now()),
+    action: editingId ? 'update_room' : 'add_room',
+    id: editingId || ('r' + Date.now()),
     room_no,
     floor: document.getElementById('f_floor').value,
-    status: document.getElementById('f_status').value,
+    status,
     rent: document.getElementById('f_rent').value,
     electric_rate: document.getElementById('f_electric').value,
     water_rate: document.getElementById('f_water').value,
-    tenant_name: document.getElementById('f_tenant_name').value,
-    checkin_date: document.getElementById('f_checkin').value,
+    tenant_name: status === 'occupied' ? document.getElementById('f_tenant_name').value : '',
+    checkin_date: status === 'occupied' ? document.getElementById('f_checkin').value : '',
     remark: document.getElementById('f_remark').value,
-    action: editingId ? 'update' : 'add',
     updated_at: new Date().toISOString(),
   };
+
   const btn = document.getElementById('btnSave');
-  btn.disabled=true; btn.textContent='กำลังบันทึก...';
+  btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
   try {
-    await fetch(WEBHOOK_SAVE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  } catch(e){ console.log('[Rooms] save error (demo mode)'); }
-  // อัปเดต local
-  if(editingId) {
-    const idx = rooms.findIndex(r=>r.id===editingId);
-    if(idx>=0) rooms[idx]={...rooms[idx],...payload};
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.log('[Rooms] save error (offline mode)');
+  }
+
+  if (editingId) {
+    const idx = rooms.findIndex(r => r.id === editingId);
+    if (idx >= 0) rooms[idx] = { ...rooms[idx], ...payload };
   } else {
     rooms.push(payload);
   }
-  updateStats(); renderRooms();
+  updateStats(); 
+  renderRooms();
   closeModal('roomModal');
-  showToast(editingId?'แก้ไขข้อมูลห้องเรียบร้อย':'เพิ่มห้องใหม่เรียบร้อย','success');
-  btn.disabled=false; btn.textContent='บันทึก';
+  showToast(editingId ? 'แก้ไขข้อมูลห้องเรียบร้อย' : 'เพิ่มห้องใหม่เรียบร้อย', 'success');
+  btn.disabled = false; btn.textContent = 'บันทึก';
 }
 
-// ===== DELETE =====
 async function deleteRoom(id, no) {
-  if(!confirm(`ต้องการลบห้อง ${no} หรือไม่?\nการดำเนินการนี้ไม่สามารถย้อนกลับได้`)) return;
+  if (!confirm(`ต้องการลบห้อง ${no} หรือไม่?\nการดำเนินการนี้ไม่สามารถย้อนกลับได้`)) return;
   try {
-    await fetch(WEBHOOK_DEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,room_no:no,action:'delete'})});
-  } catch(e){ console.log('[Rooms] delete error (demo mode)'); }
-  rooms = rooms.filter(r=>r.id!==id);
-  updateStats(); renderRooms();
-  showToast('ลบห้อง '+no+' เรียบร้อย','success');
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete_room', id, room_no: no })
+    });
+  } catch (e) {
+    console.log('[Rooms] delete error');
+  }
+  rooms = rooms.filter(r => r.id !== id);
+  updateStats(); 
+  renderRooms();
+  showToast('ลบห้อง ' + no + ' เรียบร้อย', 'success');
 }
 
-// ===== HISTORY =====
-function openHistory(id, no) {
-  document.getElementById('historyTitle').textContent='ประวัติห้อง '+no;
-  document.getElementById('historyBody').innerHTML=`
-    <div style="color:#9CA3AF;font-size:12px;margin-bottom:14px">ประวัติผู้เช่าห้อง ${no} (ข้อมูล Demo)</div>
-    <div class="history-item"><div class="history-dot"></div><div><div class="history-name">สมชาย ใจดี</div><div class="history-date">Check-in: 1 ม.ค. 2568 · Check-out: ปัจจุบัน</div></div></div>
-    <div class="history-item"><div class="history-dot" style="background:#9CA3AF"></div><div><div class="history-name">วิมล แสนดี</div><div class="history-date">Check-in: 1 มิ.ย. 2567 · Check-out: 31 ธ.ค. 2567</div></div></div>
-    <div class="history-item"><div class="history-dot" style="background:#9CA3AF"></div><div><div class="history-name">ประเสริฐ ดีมาก</div><div class="history-date">Check-in: 1 ม.ค. 2567 · Check-out: 31 พ.ค. 2567</div></div></div>
-    <div style="margin-top:16px;padding:12px;background:#FFF7ED;border-radius:10px;font-size:12px;color:#92400E">
-      เชื่อมต่อ N8n Webhook เพื่อดูประวัติจาก Google Sheets จริงครับ
-    </div>`;
+async function openHistory(id, no) {
+  document.getElementById('historyTitle').textContent = 'ประวัติห้อง ' + no;
+  document.getElementById('historyBody').innerHTML = `
+    <div class="loading-box"><svg class="spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#E5E7EB" stroke-width="2" fill="none"/><path d="M12 2a10 10 0 0110 10" stroke="#F97316" stroke-width="2" fill="none" stroke-linecap="round"/></svg><div>กำลังโหลดประวัติ...</div></div>`;
   document.getElementById('historyModal').classList.add('show');
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'history', room_id: id, room_no: no })
+    });
+    const raw = await res.json();
+    const history = Array.isArray(raw) ? raw : (raw.data || []);
+
+    if (!history.length) {
+      document.getElementById('historyBody').innerHTML = `<div style="text-align:center;color:#9CA3AF;padding:30px;">ไม่พบประวัติการเข้าพักของห้องนี้</div>`;
+      return;
+    }
+
+    document.getElementById('historyBody').innerHTML = history.map(item => {
+      const checkin = item.checkin_date || item.checkin || item.start_date || '—';
+      const checkout = item.checkout_date || item.check_out || item.end_date || 'ปัจจุบัน';
+      const name = item.tenant_name || item.name || item.user || 'ไม่ระบุ';
+      return `
+        <div class="history-item">
+          <div class="history-dot"></div>
+          <div>
+            <div class="history-name">${name}</div>
+            <div class="history-date">Check-in: ${checkin} · Check-out: ${checkout}</div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (error) {
+    document.getElementById('historyBody').innerHTML = `<div style="text-align:center;color:#9CA3AF;padding:30px;">ไม่สามารถโหลดประวัติได้ในขณะนี้</div>`;
+  }
 }
 
-// ===== TOAST =====
-function showToast(msg, type='') {
+function showToast(msg, type = '') {
   const t = document.getElementById('toast');
-  t.textContent=msg;
-  t.className='show '+(type==='success'?'success':type==='error'?'error':'');
-  setTimeout(()=>t.classList.remove('show'),3000);
+  t.textContent = msg;
+  t.className = 'show ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('show'); });
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
 });
 
-// ===== INIT =====
 setView('grid');
 loadRooms();
 </script>

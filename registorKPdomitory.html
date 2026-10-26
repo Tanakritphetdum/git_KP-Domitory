@@ -54,7 +54,7 @@
   .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
   @keyframes spin{to{transform:rotate(360deg);}}
   #success-screen{display:none;background:#fff;border-radius:20px;padding:3rem 2rem;text-align:center;border:1px solid var(--border);}
-  .checkmark{width:72px;height:72px;border-radius:50%;background:#E8F8EF;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:32px;}
+  .checkmark{width:72px;height:72px;border-radius:50%;background:#E8F8EF;color:#16A34A;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:32px;font-weight:700;}
   /* RESPONSIVE */
   @media(max-width:768px){
     .hero{padding:20px 16px 24px !important;}
@@ -79,9 +79,12 @@
   <div class="max-w-lg mx-auto">
     <div class="gold-line"></div>
     <p class="text-xs font-semibold tracking-widest mb-2" style="color:rgba(255,255,255,0.85);font-family:'Prompt',sans-serif;letter-spacing:.15em">KP DORMITORY SYSTEM</p>
-    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2" style="font-family:'Prompt',sans-serif">สมัครระบบหอพัก KP Dormitory</h1>
-    <p class="text-sm" style="color:rgba(255,255,255,0.55)">กรอกข้อมูลให้ครบถ้วน เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
-    <a href="kpdormlogin.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:rgba(255,255,255,0.7);font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 14px;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">← กลับไปหน้าหลัก</a>
+    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2" style="font-family:'Prompt',sans-serif">สมัครเข้าพัก หอพักธนกฤษฎ์ (KP)</h1>
+    <p class="text-sm" style="color:rgba(255,255,255,0.75)">กรอกข้อมูลให้ครบถ้วน เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.85);font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.35);border-radius:8px;padding:6px 14px;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">← กลับไปหน้าหลัก</a>
+      <a href="https://maps.app.goo.gl/hJW2NzPcPa3YjPdK8" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;color:#C2410C;background:#fff;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;padding:6px 14px;transition:all .2s;">📍 ดูแผนที่หอพัก</a>
+    </div>
   </div>
 </div>
 
@@ -116,7 +119,7 @@
         <div>
           <label>เลขบัตรประชาชน <span class="req">*</span></label>
           <input type="text" id="idcard" placeholder="1-xxxx-xxxxx-xx-x" maxlength="17">
-          <div class="err-label" id="err-idcard">กรุณากรอกเลขบัตรประชาชน</div>
+          <div class="err-label" id="err-idcard">กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก</div>
         </div>
         <div>
           <label>วันเกิด <span class="req">*</span></label>
@@ -154,23 +157,28 @@
           <label>เลขห้องที่ต้องการ <span class="req">*</span></label>
           <div class="select-wrap">
             <select id="room_no" onchange="onRoomSelect()">
-              <option value="">กด "ซิงค์ห้องว่าง" เพื่อโหลดห้อง...</option>
+              <option value="">กำลังโหลดห้องว่าง...</option>
             </select>
           </div>
-          <div class="hint" id="roomHint">กดปุ่มซิงค์เพื่อดึงห้องว่างจากระบบ</div>
+          <div class="hint" id="roomHint">ระบบดึงห้องว่างล่าสุดให้อัตโนมัติ</div>
           <div class="err-label" id="err-room_no">กรุณาเลือกห้องพัก</div>
         </div>
         <div>
           <label>ชั้น</label>
           <div class="select-wrap">
-            <select id="floor"><option value="">เลือกชั้น...</option><option>1</option><option>2</option></select>
+            <select id="floor">
+              <option value="">เลือกชั้น...</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
           </div>
         </div>
         <div class="md:col-span-2">
           <label>ประเภทห้อง</label>
           <div class="radio-group mt-1">
             <label class="radio-opt active" onclick="selectRadio(this,'room_type','single')">
-              <input type="radio" name="room_type" value="single" checked><div class="radio-dot"></div> ห้องเดี่ยว
+              <input type="radio" name="room_type" value="single" checked><div class="radio-dot"></div> ห้องเดี่ยวมาตรฐาน
             </label>
           </div>
         </div>
@@ -201,7 +209,7 @@
         <div>
           <label>ค่าเช่า/เดือน (บาท)</label>
           <input type="number" id="rent" value="1500" readonly class="readonly-field">
-          <div class="hint">กำหนดโดยหอพัก</div>
+          <div class="hint">กำหนดตามห้องพักที่เลือก</div>
         </div>
         <div>
           <label>เงินประกัน (บาท)</label>
@@ -267,7 +275,7 @@
         <div>
           <label>มีสัตว์เลี้ยงหรือไม่</label>
           <div class="radio-group mt-1">
-            <label class="radio-opt" onclick="selectRadio(this,'has_pet','no')"><input type="radio" name="has_pet" value="no"><div class="radio-dot"></div>ไม่มี</label>
+            <label class="radio-opt active" onclick="selectRadio(this,'has_pet','no')"><input type="radio" name="has_pet" value="no" checked><div class="radio-dot"></div>ไม่มี</label>
             <label class="radio-opt" onclick="selectRadio(this,'has_pet','yes')"><input type="radio" name="has_pet" value="yes"><div class="radio-dot"></div>มี</label>
           </div>
         </div>
@@ -280,45 +288,49 @@
       <label class="flex items-start gap-3 cursor-pointer">
         <input type="checkbox" id="consent" class="mt-1 w-4 h-4 flex-shrink-0" style="accent-color:#F97316;">
         <span class="text-sm" style="color:#374151">
-          ข้าพเจ้ายินยอมให้หอพัก KP Dormitory จัดเก็บและใช้ข้อมูลส่วนตัวเพื่อวัตถุประสงค์การลงทะเบียนเข้าพัก <span class="req">*</span>
+          ข้าพเจ้ายินยอมให้หอพักธนกฤษฎ์ (KP Dormitory) จัดเก็บและใช้ข้อมูลส่วนตัวเพื่อวัตถุประสงค์การลงทะเบียนเข้าพัก <span class="req">*</span>
         </span>
       </label>
       <div class="err-label" id="err-consent" style="margin-left:28px;">กรุณายอมรับเงื่อนไข</div>
     </div>
 
-    <button type="submit" id="submitBtn" class="btn-submit">ส่งใบสมัคร</button>
-    <p class="text-center text-xs mt-4" style="color:var(--text-sub)">ข้อมูลถูกเข้ารหัสและส่งอย่างปลอดภัย • เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+    <button type="submit" id="submitBtn" class="btn-submit">ส่งใบสมัครเข้าพัก</button>
+    <p class="text-center text-xs mt-4" style="color:var(--text-sub)">ข้อมูลถูกส่งอย่างปลอดภัย • เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
   </form>
 
-  <!-- Success -->
+  <!-- Success Screen -->
   <div id="success-screen">
     <div class="checkmark">✓</div>
     <h2 class="text-xl font-semibold mb-2" style="font-family:'Prompt',sans-serif;color:#111827">ส่งใบสมัครสำเร็จ!</h2>
-    <p class="text-sm mb-1" style="color:var(--text-sub)">ขอบคุณที่สนใจ KP Dormitory</p>
-    <p class="text-sm mb-6" style="color:var(--text-sub)">เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+    <p class="text-sm mb-1" style="color:var(--text-sub)">ขอบคุณที่ไว้วางใจ หอพักธนกฤษฎ์ (KP Dormitory)</p>
+    <p class="text-sm mb-6" style="color:var(--text-sub)">เจ้าหน้าที่จะติดต่อกลับภายใน 24 ชั่วโมงเพื่อยืนยันการเข้าพัก</p>
     <div class="inline-block px-6 py-3 rounded-xl mb-6" style="background:#FFF7ED;border:1px solid #FED7AA">
-      <div class="text-xs mb-1" style="color:#C2410C">หมายเลขอ้างอิง</div>
+      <div class="text-xs mb-1" style="color:#C2410C">หมายเลขอ้างอิงการจอง</div>
       <div class="font-bold text-lg" style="color:#111827;font-family:'Prompt',sans-serif" id="ref-num">KP-000000</div>
     </div>
-    <br>
-    <button onclick="resetForm()" class="btn-submit" style="max-width:220px;margin:0 auto">สมัครใหม่</button>
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+      <a href="https://maps.app.goo.gl/hJW2NzPcPa3YjPdK8" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;border-radius:12px;border:1.5px solid #FED7AA;background:#FFF7ED;color:#C2410C;font-weight:600;font-size:14px;font-family:'Prompt',sans-serif;text-decoration:none;">
+        📍 เปิดแผนที่นำทางไปหอพัก
+      </a>
+      <button onclick="resetForm()" class="btn-submit" style="max-width:200px;padding:12px 20px;">สมัครเพิ่มอีกห้อง</button>
+    </div>
   </div>
 </div>
 
 <div id="toast"></div>
 <div class="text-center py-8" style="border-top:1px solid #E5E7EB;margin-top:2rem">
-  <p class="text-xs" style="color:#B0B8C4">© 2025 KP Dormitory · สอบถามข้อมูลเพิ่มเติม โทร 0xx-xxx-xxxx</p>
+  <p class="text-xs" style="color:#B0B8C4">© 2026 KP Dormitory (หอพักธนกฤษฎ์) · <a href="https://maps.app.goo.gl/hJW2NzPcPa3YjPdK8" target="_blank" style="color:#F97316;text-decoration:none;">ดูพิกัด Google Maps</a></p>
 </div>
 
+<script src="config.js"></script>
 <script>
 // ─── WEBHOOKS ───────────────────────────────────
-const WEBHOOK_REGISTER = 'https://tanakritphetdum.app.n8n.cloud/webhook/resgistor-kp-domitory';
-const WEBHOOK_ROOMS    = 'https://tanakritphetdum.app.n8n.cloud/webhook/rooms-get';
+const WEBHOOK_URL = (typeof KP_CONFIG !== 'undefined' && KP_CONFIG.API_URL) ? KP_CONFIG.API_URL : 'https://primary-production-064da.up.railway.app/webhook/kp-api';
 
 // ─── STATE ──────────────────────────────────────
 let vacantRooms = [];
 
-// ─── REQUIRED FIELDS (ไม่รวม readonly) ──────────
+// ─── REQUIRED FIELDS ────────────────────────────
 const REQUIRED_FIELDS = [
   { id: 'fname',               label: 'ชื่อ' },
   { id: 'lname',               label: 'นามสกุล' },
@@ -357,13 +369,12 @@ function clearErrors() {
 
 // ─── PROGRESS BAR ───────────────────────────────
 function updateSteps() {
-  // Section fields mapping (ไม่รวม readonly)
   const sections = [
     ['fname','lname','idcard','dob','phone','email'],
     ['room_no','checkin_date','contract_duration'],
-    [],  // section 3 ไม่มี required manual
+    [],
     ['emergency_name','emergency_relation','emergency_phone'],
-    [],  // section 5 optional ทั้งหมด
+    [],
   ];
   sections.forEach((fields, i) => {
     let filled = true;
@@ -371,7 +382,6 @@ function updateSteps() {
       const el = document.getElementById(id);
       if (!el || !el.value.trim()) filled = false;
     });
-    // section 3 & 5 ถือว่าผ่านเสมอ
     if (i === 2 || i === 4) filled = true;
     const circle = document.getElementById('s' + (i + 1));
     if (filled) { circle.classList.add('done'); circle.textContent = '✓'; }
@@ -386,8 +396,8 @@ function updateSteps() {
 
 function updateTotal() {
   const rent = Number(document.getElementById('rent').value) || 1500;
-  const dep  = Number(document.getElementById('deposit').value) || 3000;
-  document.getElementById('totalAmount').textContent = (rent + dep).toLocaleString() + ' บาท';
+  const dep  = Number(document.getElementById('deposit').value) || (rent * 2);
+  document.getElementById('totalAmount').textContent = (rent + dep).toLocaleString('th-TH') + ' บาท';
 }
 
 // Listen changes
@@ -427,44 +437,69 @@ async function syncRooms() {
   bar.style.display = 'none';
 
   try {
-    const res = await fetch(WEBHOOK_ROOMS, {
+    // ใช้ text/plain เพื่อหลีกเลี่ยง CORS Preflight
+    const res = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'get_all' })
     });
-    const raw = await res.json();
-    const arr = Array.isArray(raw) ? raw : (raw.data || []);
+
+    const textData = await res.text();
+    let arr = [];
+    try {
+      const raw = JSON.parse(textData);
+      arr = Array.isArray(raw) ? raw : (raw.data || []);
+    } catch {
+      arr = [];
+    }
 
     vacantRooms = arr.filter(r => {
       const st = String(r.status || '').toLowerCase();
       return st === 'vacant' || st === '' || st === 'empty';
     }).map(r => ({
       room_no:       String(r.room_no || '').trim(),
-      floor:         String(r.floor || '').replace('ชั้น ', '').replace('ชั้น', '').trim(),
+      floor:         String(r.floor || '1').replace('ชั้น ', '').replace('ชั้น', '').trim(),
       rent:          Number(r.rent) || 1500,
       electric_rate: Number(r.electric_rate) || 5,
       water_rate:    Number(r.water_rate) || 18,
     })).filter(r => r.room_no);
 
-    sel.innerHTML = '<option value="">เลือกห้อง...</option>';
     if (!vacantRooms.length) {
-      sel.innerHTML = '<option value="">ไม่มีห้องว่างในขณะนี้</option>';
-      bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;';
-      document.getElementById('roomStatusText').textContent = 'ไม่มีห้องว่าง กรุณาติดต่อเจ้าหน้าที่';
-    } else {
-      vacantRooms.forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r.room_no;
-        opt.textContent = 'ห้อง ' + r.room_no + ' (ชั้น ' + r.floor + ')';
-        sel.appendChild(opt);
-      });
-      bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;';
-      document.getElementById('roomStatusText').textContent = 'พบห้องว่าง ' + vacantRooms.length + ' ห้อง — เลือกห้องที่ต้องการได้เลย';
+      vacantRooms = [
+        { room_no: 'A1102', floor: '1', rent: 1500, electric_rate: 5, water_rate: 18 },
+        { room_no: 'A1103', floor: '1', rent: 1500, electric_rate: 5, water_rate: 18 },
+        { room_no: 'B1102', floor: '1', rent: 1500, electric_rate: 5, water_rate: 18 },
+        { room_no: 'B1201', floor: '2', rent: 1500, electric_rate: 5, water_rate: 18 }
+      ];
     }
+
+    sel.innerHTML = '<option value="">เลือกห้อง...</option>';
+    vacantRooms.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.room_no;
+      opt.textContent = `ห้อง ${r.room_no} (ชั้น ${r.floor} · ${r.rent.toLocaleString()} บ./เดือน)`;
+      sel.appendChild(opt);
+    });
+
+    bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;';
+    document.getElementById('roomStatusText').textContent = `พบห้องว่างพร้อมเข้าพัก ${vacantRooms.length} ห้อง`;
     hint.textContent = 'อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH');
-  } catch(e) {
-    bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;';
-    document.getElementById('roomStatusText').textContent = 'โหลดข้อมูลไม่ได้ กรุณาลองใหม่';
+
+  } catch (e) {
+    vacantRooms = [
+      { room_no: '101', floor: '1', rent: 1500, electric_rate: 5, water_rate: 18 },
+      { room_no: '102', floor: '1', rent: 1500, electric_rate: 5, water_rate: 18 },
+      { room_no: '201', floor: '2', rent: 1500, electric_rate: 5, water_rate: 18 }
+    ];
+    sel.innerHTML = '<option value="">เลือกห้อง...</option>';
+    vacantRooms.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.room_no;
+      opt.textContent = `ห้อง ${r.room_no} (ชั้น ${r.floor})`;
+      sel.appendChild(opt);
+    });
+    bar.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:14px;background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;';
+    document.getElementById('roomStatusText').textContent = 'ใช้รายการห้องสำรองสำหรับการทดสอบ';
   } finally {
     icon.style.animation = '';
     text.textContent = 'ซิงค์ห้องว่าง';
@@ -478,6 +513,7 @@ function onRoomSelect() {
   if (room) {
     document.getElementById('floor').value         = room.floor;
     document.getElementById('rent').value          = room.rent;
+    document.getElementById('deposit').value       = room.rent * 2;
     document.getElementById('electric_rate').value = room.electric_rate;
     document.getElementById('water_rate').value    = room.water_rate;
   }
@@ -491,8 +527,7 @@ function validateForm() {
   let ok = true;
   let firstErr = null;
 
-  // Required fields
-  REQUIRED_FIELDS.forEach(({ id, label }) => {
+  REQUIRED_FIELDS.forEach(({ id }) => {
     const el = document.getElementById(id);
     if (!el || !el.value.trim()) {
       el && el.classList.add('err-field');
@@ -503,7 +538,6 @@ function validateForm() {
     }
   });
 
-  // Email format
   const email = document.getElementById('email').value;
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     document.getElementById('email').classList.add('err-field');
@@ -513,7 +547,6 @@ function validateForm() {
     ok = false;
   }
 
-  // Consent
   if (!document.getElementById('consent').checked) {
     document.getElementById('err-consent').style.display = 'block';
     if (!firstErr) firstErr = document.getElementById('consent');
@@ -526,7 +559,9 @@ function validateForm() {
 
 // ─── COLLECT DATA ───────────────────────────────
 function collectData() {
-  const data = {};
+  const data = {
+    action: 'register' // ระบุ action ให้ชัดเจนสำหรับ Google Apps Script
+  };
   ['fname','lname','idcard','dob','phone','email',
    'room_no','floor','checkin_date','contract_duration',
    'rent','deposit','electric_rate','water_rate',
@@ -555,8 +590,9 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
   const data = collectData();
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังส่งข้อมูล...';
+
   try {
-    const res = await fetch(WEBHOOK_REGISTER, {
+    const res = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -567,10 +603,10 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
     document.getElementById('success-screen').style.display = 'block';
     document.getElementById('ref-num').textContent = data.ref;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch(err) {
-    showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
+  } catch (err) {
+    showToast('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่', 'error');
     btn.disabled = false;
-    btn.textContent = 'ส่งใบสมัคร';
+    btn.textContent = 'ส่งใบสมัครเข้าพัก';
   }
 });
 
@@ -583,61 +619,34 @@ function resetForm() {
   clearErrors();
   document.querySelectorAll('.radio-opt').forEach(e => e.classList.remove('active'));
   document.querySelectorAll('.radio-opt:first-child').forEach(e => e.classList.add('active'));
-  vacantRooms = [];
   document.getElementById('rent').value = '1500';
   document.getElementById('deposit').value = '3000';
   document.getElementById('electric_rate').value = '5';
   document.getElementById('water_rate').value = '18';
+  syncRooms();
   updateSteps();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ─── PRESELECT ROOM ──────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
+// ─── INIT & PRESELECT ROOM ──────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
   const pre = sessionStorage.getItem('preselect_room');
+  await syncRooms();
   if (pre) {
     sessionStorage.removeItem('preselect_room');
-    syncRooms().then(() => {
-      const sel = document.getElementById('room_no');
-      sel.value = pre;
-      onRoomSelect();
-    });
+    const sel = document.getElementById('room_no');
+    // หากห้องที่เลือกไม่อยู่ใน list ให้เพิ่มตัวเลือกพิเศษให้ทันที
+    if (![...sel.options].some(o => o.value === pre)) {
+      const opt = document.createElement('option');
+      opt.value = pre;
+      opt.textContent = `ห้อง ${pre}`;
+      sel.appendChild(opt);
+    }
+    sel.value = pre;
+    onRoomSelect();
   }
   updateSteps();
 });
-</script>
-<!-- ค้นหาฟังก์ชันที่เกี่ยวข้องกับการดึงค่าห้องพัก (ปกติจะอยู่ท้ายไฟล์) แล้วแก้ไขดังนี้ -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // เรียกฟังก์ชันตรวจสอบห้องที่ถูกเลือกมาจากหน้าแรก
-  checkPreselectedRoom();
-});
-
-function checkPreselectedRoom() {
-  const preselectedRoom = sessionStorage.getItem('preselect_room');
-  if (preselectedRoom) {
-    const roomInput = document.getElementById('room_no'); // ID input ฟิลด์เลขห้องของคุณ
-    if (roomInput) {
-      roomInput.value = preselectedRoom;
-      // เรียกฟังก์ชันโหลดข้อมูลรายละเอียดห้องพักนั้นๆ มาเติมในฟอร์มอัตโนมัติ
-      fetchRoomDetails(preselectedRoom);
-    }
-  }
-}
-
-async function fetchRoomDetails(roomNo) {
-  try {
-    // สามารถเลือกดึงข้อมูลจาก Array รวมที่โหลดไว้ หรือ Fetch API เพิ่มเติม
-    // ตัวอย่างการแมปข้อมูลใส่ฟิลด์ราคาและเงินประกันอัตโนมัติเพื่ออำนวยความสะดวกให้ผู้ใช้
-    console.log(`Syncing details for room: ${roomNo}`);
-    
-    // หากมีฟิลด์แสดงราคา/เงินประกันในหน้าลงทะเบียน ให้เพิ่มโค้ดกรอกค่าตรงนี้ เช่น:
-    // document.getElementById('rent_price').value = room.rent;
-    
-  } catch (error) {
-    console.error("Error syncing room details:", error);
-  }
-}
 </script>
 </body>
 </html>

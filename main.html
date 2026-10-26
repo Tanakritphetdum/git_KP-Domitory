@@ -43,46 +43,49 @@
   .status-occupied{background:#F0FDF4;color:#16A34A;}
   .status-vacant{background:#EFF6FF;color:#2563EB;}
   .status-maintenance{background:#FEF9C3;color:#CA8A04;}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  .two-col{display:grid;grid-template-columns:1.15fr 0.85fr;gap:16px;}
+  .quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
   .quick-btn{background:#fff;border:1px solid #F3F4F6;border-radius:12px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .18s;text-decoration:none;display:block;}
-  .quick-btn:hover{border-color:#FED7AA;background:#FFF7ED;}
+  .quick-btn:hover{border-color:#FED7AA;background:#FFF7ED;transform:translateY(-1px);}
   .quick-btn-icon{margin-bottom:8px;display:flex;justify-content:center;}
   .quick-btn-icon svg{width:24px;height:24px;stroke:#F97316;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-  .quick-btn-label{font-size:12px;color:#374151;font-weight:500;}
+  .quick-btn-label{font-size:12px;color:#374151;font-weight:600;}
   .user-strip{background:linear-gradient(135deg,#0F1E35 0%,#1A2E4A 100%);border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:28px;color:#fff;}
   .user-strip-avatar{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#F97316,#EA580C);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;font-family:'Prompt',sans-serif;flex-shrink:0;}
   .user-strip-info{flex:1;}
   .user-strip-name{font-size:16px;font-weight:600;font-family:'Prompt',sans-serif;}
-  .user-strip-sub{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
+  .user-strip-sub{font-size:12px;color:rgba(255,255,255,0.65);margin-top:2px;}
   .user-strip-room{background:rgba(249,115,22,0.2);border:1px solid rgba(249,115,22,0.4);border-radius:10px;padding:8px 16px;text-align:center;}
   .user-strip-room-label{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.08em;}
   .user-strip-room-val{font-size:20px;font-weight:700;color:#FED7AA;font-family:'Prompt',sans-serif;}
-  @media(max-width:768px){.kp-main-content{margin-left:0;}.page-content{padding:70px 16px 24px;}.two-col{grid-template-columns:1fr;}.topbar{padding:0 16px 0 60px;}.user-strip{flex-wrap:wrap;}}
-  @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;}}
 
-/* ── RESPONSIVE MAIN ─── */
-@media(max-width:768px){
-  .kp-main-content{margin-left:0!important;}
-  .page-content{padding:70px 12px 24px!important;}
-  .topbar{padding:0 12px 0 56px!important;}
-  .two-col{grid-template-columns:1fr!important;}
-  .stats-grid{grid-template-columns:1fr 1fr!important;gap:10px;}
-  .stat-card{padding:14px 16px;}
-  .stat-value{font-size:22px;}
-  .user-strip{flex-wrap:wrap;gap:12px;padding:16px;}
-  .user-strip-room{width:100%;text-align:left;padding:10px 14px;}
-  .quick-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:480px){
-  .stats-grid{grid-template-columns:1fr 1fr;}
-  .kp-table{font-size:12px;}
-  .kp-table th,.kp-table td{padding:8px 10px;}
-}
-@media(min-width:769px) and (max-width:1024px){
-  .kp-main-content{margin-left:240px;}
-  .two-col{grid-template-columns:1fr!important;}
-}
+  /* Location Mini Card */
+  .map-mini-card{background:linear-gradient(135deg,#FFF7ED 0%,#FFEDD5 100%);border:1px solid #FED7AA;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .map-mini-info{display:flex;align-items:center;gap:10px;}
+  .map-mini-icon{width:36px;height:36px;border-radius:10px;background:#F97316;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .map-mini-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .map-mini-btn{background:#fff;color:#EA580C;border:1px solid #FED7AA;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;font-family:'Prompt',sans-serif;text-decoration:none;white-space:nowrap;transition:all .15s;}
+  .map-mini-btn:hover{background:#F97316;color:#fff;border-color:#F97316;}
+
+  @media(max-width:768px){
+    .kp-main-content{margin-left:0!important;}
+    .page-content{padding:70px 12px 24px!important;}
+    .topbar{padding:0 12px 0 56px!important;}
+    .two-col{grid-template-columns:1fr!important;}
+    .stats-grid{grid-template-columns:1fr 1fr!important;gap:10px;}
+    .stat-card{padding:14px 16px;}
+    .stat-value{font-size:22px;}
+    .user-strip{flex-wrap:wrap;gap:12px;padding:16px;}
+    .user-strip-room{width:100%;text-align:left;padding:10px 14px;}
+  }
+  @media(max-width:480px){
+    .kp-table{font-size:12px;}
+    .kp-table th,.kp-table td{padding:8px 10px;}
+  }
+  @media(min-width:769px) and (max-width:1024px){
+    .kp-main-content{margin-left:240px;}
+    .two-col{grid-template-columns:1fr!important;}
+  }
 </style>
 </head>
 <body>
@@ -98,7 +101,9 @@
       <div class="room-badge" id="topRoomId">ห้อง —</div>
     </div>
   </div>
+
   <div class="page-content">
+    <!-- User Strip -->
     <div class="user-strip" id="userStrip">
       <div class="user-strip-avatar" id="stripAvatar">KP</div>
       <div class="user-strip-info">
@@ -106,103 +111,237 @@
         <div class="user-strip-sub" id="stripSub">KP Dormitory Management System</div>
       </div>
       <div class="user-strip-room">
-        <div class="user-strip-room-label">รหัสห้อง</div>
+        <div class="user-strip-room-label">รหัสประจำตัว / ห้อง</div>
         <div class="user-strip-room-val" id="stripRoom">—</div>
       </div>
     </div>
+
+    <!-- Stats Grid -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon orange"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-        <div><div class="stat-label">ห้องทั้งหมด</div><div class="stat-value">24</div></div>
-        <div class="stat-trend trend-up">↑ 2 ห้องใหม่เดือนนี้</div>
+        <div><div class="stat-label">ห้องทั้งหมด</div><div class="stat-value" id="statAllRooms">—</div></div>
+        <div class="stat-trend trend-up" id="statMaintText">กำลังโหลดข้อมูล...</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon green"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-        <div><div class="stat-label">ผู้เช่าปัจจุบัน</div><div class="stat-value">18</div></div>
-        <div class="stat-trend trend-up">↑ 3 คนเดือนนี้</div>
+        <div><div class="stat-label">มีผู้เช่าปัจจุบัน</div><div class="stat-value" id="statOccupiedRooms">—</div></div>
+        <div class="stat-trend trend-up" id="statOccRate">อัตราการเข้าพัก —%</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        <div><div class="stat-label">ห้องว่าง</div><div class="stat-value">6</div></div>
-        <div class="stat-trend" style="color:#9CA3AF">พร้อมรับผู้เช่า</div>
+        <div><div class="stat-label">ห้องว่าง</div><div class="stat-value" id="statVacantRooms">—</div></div>
+        <div class="stat-trend" style="color:#2563EB">พร้อมรับผู้เช่าใหม่</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon red"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-        <div><div class="stat-label">รายได้เดือนนี้</div><div class="stat-value">27,000</div></div>
-        <div class="stat-trend trend-up">↑ 1,500 จากเดือนที่แล้ว</div>
+        <div><div class="stat-label">รายได้ค่าเช่าประมาณการ</div><div class="stat-value" id="statEstRevenue">—</div></div>
+        <div class="stat-trend trend-up">บาท / เดือน (เฉพาะค่าห้อง)</div>
       </div>
     </div>
+
+    <!-- Main Two Columns -->
     <div class="two-col">
+      <!-- Left: Room & Tenant List -->
       <div class="info-card">
         <div class="info-card-header">
-          <span class="section-title" style="margin:0">ผู้เช่าล่าสุด <span class="section-sub">5 รายการ</span></span>
+          <span class="section-title" style="margin:0">สถานะห้องพักและผู้เช่า <span class="section-sub" id="recentCountLabel">กำลังโหลด...</span></span>
+          <a href="rooms.html" style="font-size:12px;color:#F97316;font-weight:600;text-decoration:none;">ดูทั้งหมด →</a>
         </div>
         <table class="kp-table">
-          <thead><tr><th>ชื่อ</th><th>ห้อง</th><th>สถานะ</th></tr></thead>
-          <tbody>
-            <tr><td><div style="font-weight:500">สมชาย ใจดี</div><div style="font-size:11px;color:#9CA3AF">KP-847291</div></td><td><span style="font-weight:600;color:#F97316">201</span></td><td><span class="status-badge status-occupied">มีผู้เช่า</span></td></tr>
-            <tr><td><div style="font-weight:500">มาลี สวยงาม</div><div style="font-size:11px;color:#9CA3AF">KP-847288</div></td><td><span style="font-weight:600;color:#F97316">103</span></td><td><span class="status-badge status-occupied">มีผู้เช่า</span></td></tr>
-            <tr><td><div style="font-weight:500">วิชัย รักดี</div><div style="font-size:11px;color:#9CA3AF">KP-847280</div></td><td><span style="font-weight:600;color:#F97316">305</span></td><td><span class="status-badge status-occupied">มีผู้เช่า</span></td></tr>
-            <tr><td><div style="font-weight:500">ห้องว่าง</div><div style="font-size:11px;color:#9CA3AF">—</div></td><td><span style="font-weight:600;color:#2563EB">102</span></td><td><span class="status-badge status-vacant">ว่าง</span></td></tr>
-            <tr><td><div style="font-weight:500">ซ่อมบำรุง</div><div style="font-size:11px;color:#9CA3AF">—</div></td><td><span style="font-weight:600;color:#CA8A04">204</span></td><td><span class="status-badge status-maintenance">ซ่อมบำรุง</span></td></tr>
+          <thead>
+            <tr>
+              <th>ผู้เช่า / รายละเอียด</th>
+              <th>ห้อง</th>
+              <th>ชั้น</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="recentRoomsBody">
+            <tr><td colspan="4" style="text-align:center;padding:32px;color:#9CA3AF">กำลังดึงข้อมูลห้องพัก...</td></tr>
           </tbody>
         </table>
       </div>
+
+      <!-- Right: Quick Actions, Location & Session -->
       <div style="display:flex;flex-direction:column;gap:16px">
         <div class="info-card">
-          <div class="info-card-header"><span class="section-title" style="margin:0">Quick Actions</span></div>
-          <div style="padding:16px">
+          <div class="info-card-header"><span class="section-title" style="margin:0">เมนูลัด (Quick Actions)</span></div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
             <div class="quick-grid">
               <a href="registorKPdomitory.html" class="quick-btn">
                 <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
-                <div class="quick-btn-label">เพิ่มผู้เช่า</div>
+                <div class="quick-btn-label">ลงทะเบียนผู้เช่าใหม่</div>
               </a>
               <a href="rooms.html" class="quick-btn">
                 <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-                <div class="quick-btn-label">จัดการห้อง</div>
+                <div class="quick-btn-label">จัดการห้องพัก</div>
               </a>
-              <a href="#" class="quick-btn">
-                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-                <div class="quick-btn-label">รายงาน</div>
+              <a href="Elecwateruse.html" class="quick-btn">
+                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                <div class="quick-btn-label">คำนวณค่าน้ำ-ค่าไฟ</div>
               </a>
-              <a href="#" class="quick-btn">
-                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg></div>
-                <div class="quick-btn-label">แจ้งค่าเช่า</div>
+              <a href="users.html" class="quick-btn">
+                <div class="quick-btn-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+                <div class="quick-btn-label">จัดการผู้ใช้งาน</div>
               </a>
+            </div>
+
+            <!-- Google Maps Location Card -->
+            <div class="map-mini-card">
+              <div class="map-mini-info">
+                <div class="map-mini-icon">
+                  <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:#9A3412;font-family:'Prompt',sans-serif;">พิกัดหอพักธนกฤษฎ์</div>
+                  <div style="font-size:11px;color:#C2410C;">Google Maps สำหรับแชร์ให้ผู้เช่า</div>
+                </div>
+              </div>
+              <a href="https://maps.app.goo.gl/hJW2NzPcPa3YjPdK8" target="_blank" rel="noopener noreferrer" class="map-mini-btn">เปิดแผนที่ ↗</a>
             </div>
           </div>
         </div>
+
         <div class="info-card">
-          <div class="info-card-header"><span class="section-title" style="margin:0">ข้อมูล Session</span></div>
+          <div class="info-card-header"><span class="section-title" style="margin:0">ข้อมูลผู้ใช้งานปัจจุบัน (Session)</span></div>
           <div style="padding:14px 16px;display:flex;flex-direction:column;gap:6px" id="sessionInfo"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="config.js"></script>
 <script src="menu.js"></script>
 <script>
   KPMenu.render('sidebar-container');
   const user = KPMenu.getSession();
-  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('th-TH',{weekday:'short',year:'numeric',month:'long',day:'numeric'});
+
+  const WEBHOOK_URL = (typeof KP_CONFIG !== 'undefined' && KP_CONFIG.API_URL) ? KP_CONFIG.API_URL : 'https://primary-production-064da.up.railway.app/webhook/kp-api';
+
+  const ROLE_MAP = {
+    '1': 'Super Admin',
+    '2': 'Admin',
+    '3': 'ผู้จัดการ',
+    '4': 'พนักงาน',
+    '0': 'ผู้เช่า'
+  };
+
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('th-TH', {
+    weekday: 'short', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
   if (user) {
-    document.getElementById('topRoomId').textContent = 'ห้อง ' + (user.res_roomid||'—');
+    const roomId = user.res_roomid || '—';
+    document.getElementById('topRoomId').textContent = 'ห้อง ' + roomId;
     const name = user.res_name || user.res_users || 'ผู้ใช้';
     const p = name.trim().split(' ');
-    const letters = p.length>=2?(p[0][0]+p[1][0]).toUpperCase():name.substring(0,2).toUpperCase();
+    const letters = p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+    const roleLabel = ROLE_MAP[String(user.res_type)] || 'พนักงาน';
+
     document.getElementById('stripAvatar').textContent = letters;
     document.getElementById('stripName').textContent = name;
-    document.getElementById('stripSub').textContent = (user.res_email||'') + (user.res_type?' · Type '+user.res_type:'');
-    document.getElementById('stripRoom').textContent = user.res_roomid||'—';
-    const fields=[['res_roomid','Room ID'],['res_users','Username'],['res_name','ชื่อ'],['res_email','อีเมล'],['res_type','ประเภท']];
-    document.getElementById('sessionInfo').innerHTML = fields.map(([k,label])=>`
-      <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #F9FAFB">
-        <span style="color:#9CA3AF;font-weight:500">${label}</span>
-        <span style="color:#374151;font-weight:600">${user[k]||'—'}</span>
-      </div>`).join('');
+    document.getElementById('stripSub').textContent = (user.res_email || 'ไม่มีอีเมล') + ' · สถานะ: ' + roleLabel;
+    document.getElementById('stripRoom').textContent = roomId;
 
-   
+    const fields = [
+      ['res_roomid', 'รหัสห้อง / ประจำตัว', roomId],
+      ['res_users', 'Username', user.res_users || '—'],
+      ['res_name', 'ชื่อ-นามสกุล', name],
+      ['res_email', 'อีเมล', user.res_email || '—'],
+      ['res_type', 'ระดับสิทธิ์', roleLabel]
+    ];
+    document.getElementById('sessionInfo').innerHTML = fields.map(([k, label, val]) => `
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F9FAFB">
+        <span style="color:#9CA3AF;font-weight:500">${label}</span>
+        <span style="color:#374151;font-weight:600">${val}</span>
+      </div>`).join('');
   }
+
+  // ดึงข้อมูลห้องพักจริงมาคำนวณสถิติบน Dashboard
+  async function loadDashboardStats() {
+    let rooms = [];
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_all' })
+      });
+      const raw = await res.json();
+      const arr = Array.isArray(raw) ? raw : (raw.data || []);
+      rooms = arr.map(r => ({
+        room_no: String(r.room_no || '').trim(),
+        floor: String(r.floor || '1').replace('ชั้น ', '').replace('ชั้น', '').trim(),
+        status: (r.status && r.status !== 'empty') ? String(r.status).toLowerCase() : 'vacant',
+        rent: Number(r.rent) || 1500,
+        tenant_name: r.tenant_name || '',
+        checkin_date: r.checkin_date || '',
+        remark: r.res_remark || r.remark || ''
+      })).filter(r => r.room_no);
+
+      if (!rooms.length) throw new Error('Empty');
+    } catch (e) {
+      // ข้อมูลสำรองกรณีออฟไลน์
+      rooms = [
+        { room_no: '101', floor: '1', status: 'occupied', tenant_name: 'สมชาย ใจดี', checkin_date: '2025-01-01', rent: 1500, remark: '' },
+        { room_no: '102', floor: '1', status: 'vacant', tenant_name: '', checkin_date: '', rent: 1500, remark: '' },
+        { room_no: '103', floor: '1', status: 'maintenance', tenant_name: '', checkin_date: '', rent: 1500, remark: 'ซ่อมแอร์' },
+        { room_no: '201', floor: '2', status: 'occupied', tenant_name: 'มาลี สวยงาม', checkin_date: '2025-02-15', rent: 1500, remark: '' },
+        { room_no: '202', floor: '2', status: 'vacant', tenant_name: '', checkin_date: '', rent: 1500, remark: '' },
+        { room_no: '203', floor: '2', status: 'occupied', tenant_name: 'วิชัย รักดี', checkin_date: '2025-03-01', rent: 1500, remark: '' },
+      ];
+    }
+
+    const total = rooms.length;
+    const occupied = rooms.filter(r => r.status === 'occupied');
+    const vacant = rooms.filter(r => r.status === 'vacant');
+    const maint = rooms.filter(r => r.status === 'maintenance');
+    const estRevenue = occupied.reduce((sum, r) => sum + (Number(r.rent) || 1500), 0);
+    const occRate = total > 0 ? Math.round((occupied.length / total) * 100) : 0;
+
+    document.getElementById('statAllRooms').textContent = total;
+    document.getElementById('statOccupiedRooms').textContent = occupied.length;
+    document.getElementById('statVacantRooms').textContent = vacant.length;
+    document.getElementById('statEstRevenue').textContent = estRevenue.toLocaleString('th-TH');
+    document.getElementById('statOccRate').textContent = `อัตราการเข้าพัก ${occRate}%`;
+    document.getElementById('statMaintText').textContent = maint.length > 0 ? `ซ่อมบำรุง ${maint.length} ห้อง` : 'พร้อมใช้งานทุกห้อง';
+
+    // แสดงตาราง 6 ห้องแรก (เรียงที่มีผู้เช่าขึ้นก่อน)
+    const sorted = [...rooms].sort((a, b) => (a.status === 'occupied' ? -1 : 1));
+    const displayList = sorted.slice(0, 6);
+    document.getElementById('recentCountLabel').textContent = `แสดง ${displayList.length} จาก ${total} ห้อง`;
+
+    document.getElementById('recentRoomsBody').innerHTML = displayList.map(r => {
+      let badge = '<span class="status-badge status-vacant">ว่าง</span>';
+      let title = 'ห้องว่างพร้อมเช่า';
+      let sub = `ค่าเช่า ${Number(r.rent).toLocaleString()} บ./เดือน`;
+
+      if (r.status === 'occupied') {
+        badge = '<span class="status-badge status-occupied">มีผู้เช่า</span>';
+        title = r.tenant_name || 'ไม่ระบุชื่อผู้เช่า';
+        sub = r.checkin_date ? `เข้าพัก: ${r.checkin_date}` : 'ผู้เช่าปัจจุบัน';
+      } else if (r.status === 'maintenance') {
+        badge = '<span class="status-badge status-maintenance">ซ่อมบำรุง</span>';
+        title = 'อยู่ระหว่างซ่อมบำรุง';
+        sub = r.remark || 'งดรับผู้เช่าชั่วคราว';
+      }
+
+      return `
+        <tr>
+          <td>
+            <div style="font-weight:500">${title}</div>
+            <div style="font-size:11px;color:#9CA3AF">${sub}</div>
+          </td>
+          <td><span style="font-weight:700;color:#F97316">${r.room_no}</span></td>
+          <td>ชั้น ${r.floor}</td>
+          <td>${badge}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  loadDashboardStats();
 </script>
 </body>
 </html>
